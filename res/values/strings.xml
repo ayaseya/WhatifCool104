@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Whatif</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="spade">&#9824;</string>
+    <string name="heart">&#9829;</string>
+    <string name="club">&#9827;</string>
+    <string name="diamond">&#9830;</string>
+
+
+    <string name="test">テスト</string>
+    <string name="log">ログ</string>
+    <string name="layout"></string>
+    
+    
+<!-- 	<string name="hand1">1</string> -->
+<!--     <string name="hand2">2</string> -->
+<!--     <string name="hand3">3</string> -->
+<!--     <string name="hand4">4</string> -->
+<!--     <string name="hand5">5</string> -->
+    
+<!--     <string name="card0">&#9824;1</string> -->
+<!--     <string name="card1">&#9824;2</string> -->
+<!--     <string name="card2">&#9824;3</string> -->
+<!--     <string name="card3">&#9824;4</string> -->
+<!--     <string name="card4">&#9824;5</string> -->
+<!--     <string name="card5">&#9824;6</string> -->
+<!--     <string name="card6">&#9824;7</string> -->
+<!--     <string name="card7">&#9824;8</string> -->
+<!--     <string name="card8">&#9824;9</string> -->
+<!--     <string name="card9">&#9824;10</string> -->
+<!--     <string name="card10">&#9824;J</string> -->
+<!--     <string name="card11">&#9824;Q</string> -->
+<!--     <string name="card12">&#9824;K</string> -->
+    
+<!--     <string name="card13">&#9825;1</string> -->
+<!--     <string name="card14">&#9825;2</string> -->
+<!--     <string name="card15">&#9825;3</string> -->
+<!--     <string name="card16">&#9825;4</string> -->
+<!--     <string name="card17">&#9825;5</string> -->
+<!--     <string name="card18">&#9825;6</string> -->
+<!--     <string name="card19">&#9825;7</string> -->
+<!--     <string name="card20">&#9825;8</string> -->
+<!--     <string name="card21">&#9825;9</string> -->
+<!--     <string name="card22">&#9825;10</string> -->
+<!--     <string name="card23">&#9825;J</string> -->
+<!--     <string name="card24">&#9825;Q</string> -->
+<!--     <string name="card25">&#9825;K</string> -->
+    
+<!--     <string name="card26">&#9827;1</string> -->
+<!--     <string name="card27">&#9827;2</string> -->
+<!--     <string name="card28">&#9827;3</string> -->
+<!--     <string name="card29">&#9827;4</string> -->
+<!--     <string name="card30">&#9827;5</string> -->
+<!--     <string name="card31">&#9827;6</string> -->
+<!--     <string name="card32">&#9827;7</string> -->
+<!--     <string name="card33">&#9827;8</string> -->
+<!--     <string name="card34">&#9827;9</string> -->
+<!--     <string name="card35">&#9827;10</string> -->
+<!--     <string name="card36">&#9827;J</string> -->
+<!--     <string name="card37">&#9827;Q</string> -->
+<!--     <string name="card38">&#9827;K</string> -->
+
+<!--     <string name="card39">&#9826;1</string> -->
+<!--     <string name="card40">&#9826;2</string> -->
+<!--     <string name="card41">&#9826;3</string> -->
+<!--     <string name="card42">&#9826;4</string> -->
+<!--     <string name="card43">&#9826;5</string> -->
+<!--     <string name="card44">&#9826;6</string> -->
+<!--     <string name="card45">&#9826;7</string> -->
+<!--     <string name="card46">&#9826;8</string> -->
+<!--     <string name="card47">&#9826;9</string> -->
+<!--     <string name="card48">&#9826;10</string> -->
+<!--     <string name="card49">&#9826;J</string> -->
+<!--     <string name="card50">&#9826;Q</string> -->
+<!--     <string name="card51">&#9826;K</string> -->
+
+    <string name="chainBonus"> </string>
+    
+    <string name="SpecialBonus">SPECIAL BONUS</string>
+    <string name="Pays">PAYS</string>
+    <string name="Hits">HITS</string>
+    <string name="Wager">WAGER</string>
+    <string name="Win">WIN</string>
+    <string name="Paid">PAID</string>
+    <string name="Credit">CREDIT</string>
+    <string name="Select">SELET A CARD</string>
+    <string name="Blank"> </string>
+    <string name="zero">0</string>
+    <string name="Reset">RESET</string>
+    <string name="handName1">ROYAL FLUSH</string>
+    <string name="handName2">STRAIGHT FLUSH</string>
+    <string name="handName3">FOUR OF A KIND</string>
+    <string name="handName4">FULL HOUSE</string>
+    <string name="handName5">FLUSH</string>
+    
+<!--     <string name="handBonus1">500</string> -->
+<!--     <string name="handBonus2">100</string> -->
+<!--     <string name="handBonus3">25</string> -->
+<!--     <string name="handBonus4">10</string> -->
+<!--     <string name="handBonus5">5</string> -->
+    
+<!--     <string name="suit1">&#9824;</string> -->
+<!-- 	<string name="suit2">&#9829;</string> -->
+<!-- 	<string name="suit3">&#9827;</string> -->
+<!-- 	<string name="suit4">&#9830;</string> -->
+	
+	<string name="rank1">1</string>
+	<string name="rank2">2</string>
+	<string name="rank3">3</string>
+	<string name="rank4">4</string>
+	<string name="rank5">5</string>
+	<string name="rank6">6</string>
+	<string name="rank7">7</string>
+	<string name="rank8">8</string>
+	<string name="rank9">9</string>
+	<string name="rank10">10</string>
+	<string name="rank11">J</string>
+	<string name="rank12">Q</string>
+	<string name="rank13">K</string>
+	
+	<string name="collect">COLLECT\n/CANCEL</string>
+	<string name="halfdouble">HALF\nDOUBLE</string>
+	<string name="bet">1 BET</string>
+	<string name="repeatbet">REPEAT\nBET</string>
+	<string name="payout">PAYOUT</string>
+	<string name="deal">DEAL\n/DOUBLE</string>
+	<string name="selectAble">SELECT ABLE</string>
+	<string name="counterMsg">NUMBER OF\nSUCCCEEDED\nCARDS</string>
+	
+</resources>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- xmlns:TrumpView="http://schemas.android.com/apk/res/com.example.whatif" -->
+    <declare-styleable name="TrumpView">
+        <attr name="number" format="integer" />
+        <attr name="suit" format="string" />
+    </declare-styleable>
+    <declare-styleable name="RoundedImageView">
+        <attr name="corner_radius" format="dimension" />
+        <attr name="border_width" format="dimension" />
+        <attr name="border_color" format="color" />
+        <attr name="round_background" format="boolean" />
+        <attr name="is_oval" format="boolean" />
+        <attr name="android:scaleType" />
+    </declare-styleable>
+
+</resources>
