@@ -1,9 +1,59 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
+    <!-- <item -->
+    <!-- android:id="@+id/action_settings" -->
+    <!-- android:orderInCategory="100" -->
+    <!-- android:showAsAction="never" -->
+    <!-- android:title="@string/action_settings"/> -->
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/rotate"
         android:orderInCategory="100"
         android:showAsAction="never"
-        android:title="@string/action_settings"/>
+        android:title="Rotate"/>
+    <item
+        android:id="@+id/ranking"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="Ranking"/>
+    <item
+        android:id="@+id/send"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="Send"/>
+        <item
+        android:id="@+id/sendtrophy"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="SendTrophy"/>
+    <item
+        android:id="@+id/trophy"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="Trophy"/>
+    <item
+        android:id="@+id/RF"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="RF"/>
+    <item
+        android:id="@+id/SF"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="SF"/>
+    <item
+        android:id="@+id/FK"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="FK"/>
+    <item
+        android:id="@+id/FH"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="FH"/>
+    <item
+        android:id="@+id/FL"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="FL"/>
 
 </menu>
