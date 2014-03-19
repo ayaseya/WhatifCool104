@@ -8,6 +8,8 @@ public class User implements Serializable {
 	// クリア回数
 	public int clear_count = 0;
 
+	public int rotate = 0;
+
 	// 実績の管理
 	public boolean first_play_achievement = false;// はじめの一歩
 	public boolean first_clear_achievement = false;// 52枚達成
@@ -17,5 +19,5 @@ public class User implements Serializable {
 	public boolean FK_achievement = false;// フォー・オブ・ア・カインド
 	public boolean FH_achievement = false;// フルハウス
 	public boolean FL_achievement = false;// フラッシュ	
-	
+
 }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
     android:id="@+id/mainLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -1969,11 +1970,18 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/coinLayout"
-        android:layout_alignTop="@id/roundedImageView3"
-        android:layout_below="@id/roundedImageView0"
+        android:layout_below="@id/counterLayout"
+        android:layout_marginTop="10dp"
         android:background="#000000"
-        android:gravity="center"
+        android:gravity="top|center_horizontal"
         android:orientation="vertical" >
+
+        <com.google.android.gms.ads.AdView
+            android:id="@+id/adView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            ads:adSize="BANNER"
+            ads:adUnitId="@string/admob_unit_id" />
 
         <TextView
             android:id="@+id/msgView1"

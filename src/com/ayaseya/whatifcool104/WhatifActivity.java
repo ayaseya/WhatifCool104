@@ -50,6 +50,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewSwitcher.ViewFactory;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.android.gms.games.Games;
 import com.google.example.games.basegameutils.BaseGameActivity;
 
@@ -225,10 +227,12 @@ public class WhatifActivity extends BaseGameActivity
 				ObjectInputStream ois = new ObjectInputStream(fis);
 				user = (User) ois.readObject();
 				ois.close();
+							
+
 			} catch (Exception e) {
 				Log.d(TAG, "Error");
 			}
-		}else{
+		} else {
 			Log.v("Test", "SaveData.datが存在しませんでした");
 		}
 		setContentView(R.layout.whatif_layout);
@@ -348,11 +352,11 @@ public class WhatifActivity extends BaseGameActivity
 					if (intent.getIntExtra(AudioManager.EXTRA_RINGER_MODE, -1) == AudioManager.RINGER_MODE_NORMAL) {
 						// 通常モード
 						ringerMode = true;
-						Log.v(TAG, "通常モード");
+//						Log.v(TAG, "通常モード");
 					} else {
 						// マナーモードorサイレントモード
 						ringerMode = false;
-						Log.v(TAG, "マナーモードorサイレントモード");
+//						Log.v(TAG, "マナーモードorサイレントモード");
 					}
 				}
 			}
@@ -365,17 +369,31 @@ public class WhatifActivity extends BaseGameActivity
 				// 接続状態を取得
 				if (intent.getIntExtra("state", 0) > 0) {
 					isPlugged = true;
-					Log.v(TAG, "プラグIN");
+//					Log.v(TAG, "プラグIN");
 				} else {
 					isPlugged = false;
-					Log.v(TAG, "プラグOUT");
+//					Log.v(TAG, "プラグOUT");
 				}
 			}
 		};
+
+		// AdView をリソースとしてルックアップしてリクエストを読み込む
+		AdView adView = (AdView) this.findViewById(R.id.adView);
+		AdRequest adRequest = new AdRequest.Builder().build();
+		adView.loadAd(adRequest);
+
 		loadCoin();
 		fixFont();
 
+		
+		if(coin.getCredit()==0){
+			present();
+		}
+
+		
+		
 		//		Log.v(TAG, "onCreate()");
+
 	}// onCreate()
 
 	@Override
@@ -391,6 +409,8 @@ public class WhatifActivity extends BaseGameActivity
 		else if (config.orientation == Configuration.ORIENTATION_LANDSCAPE) {
 			horizontal();
 		}
+		
+
 
 		//		Log.v(TAG, "Counter=" + counter);
 		//		Log.v(TAG, "onWindowFocusChanged()");
@@ -478,6 +498,7 @@ public class WhatifActivity extends BaseGameActivity
 	/* ********** ********** ********** ********** */
 
 	private void saveUser() {
+
 		try {
 			FileOutputStream fos = openFileOutput("SaveData.dat", MODE_PRIVATE);
 			ObjectOutputStream oos = new ObjectOutputStream(fos);
@@ -563,27 +584,23 @@ public class WhatifActivity extends BaseGameActivity
 
 			if (config.orientation == Configuration.ORIENTATION_PORTRAIT) { // 縦画面でのマージンを設定する
 				if (i == 0) {
-					lp.topMargin = 15;
-
+					lp.topMargin = 25;
 					TextView selectAble = (TextView) findViewById(R.id.selectAble1);
-					if ((trumpViewHeight + 20 + selectAble.getHeight())
-					< findViewById(R.id.ruler).getHeight()) {
-						lp.topMargin = (findViewById(R.id.ruler).getHeight() -
-								(trumpViewHeight + 20 + selectAble.getHeight())) / 4;
-
-					}
-					if (width == 240) {
-						lp.topMargin = 15;
-					}
 
 				} else if (i == 3) {
 					lp.topMargin = 15;
 
 					TextView selectAble = (TextView) findViewById(R.id.selectAble1);
-					if ((trumpViewHeight + 20 + selectAble.getHeight())
+					if ((trumpViewHeight + 25 + selectAble.getHeight())
 					< findViewById(R.id.ruler).getHeight()) {
-						lp.topMargin = (findViewById(R.id.ruler).getHeight() -
-								(trumpViewHeight + 20 + selectAble.getHeight())) / 4;
+
+//						Log.v("Test", "ruler=" + findViewById(R.id.ruler).getHeight());
+//						Log.v("Test", "selectable=" + selectAble.getHeight());
+//						Log.v("Test", "trumpViewHeight=" + trumpViewHeight);
+//						Log.v("Test", "margin=" + ((findViewById(R.id.ruler).getHeight() -
+//								(trumpViewHeight + selectAble.getHeight()))));
+
+						lp.topMargin = findViewById(R.id.ruler).getHeight()-trumpViewHeight-selectAble.getHeight();
 					}
 
 					if (width == 240) {
@@ -1873,6 +1890,7 @@ public class WhatifActivity extends BaseGameActivity
 				for (int i = 0; i <= 5; i++) {
 					trumpView[i].setVisibility(View.VISIBLE);
 				}
+				selectAble();
 			}
 
 			// 起動時のみ必要な処理が終了したのでフラグを変更する
@@ -2043,6 +2061,7 @@ public class WhatifActivity extends BaseGameActivity
 				for (int i = 0; i <= 5; i++) {
 					trumpView[i].setVisibility(View.VISIBLE);
 				}
+				selectAble();
 			}
 
 			// 起動時のみ必要な処理が終了したのでフラグを変更する
@@ -2590,14 +2609,14 @@ public class WhatifActivity extends BaseGameActivity
 	public void onSignInFailed() {
 
 		btn.setText("SIGN IN");
-		Log.v(TAG, "onSignInFailed()");
+//		Log.v(TAG, "onSignInFailed()");
 	}
 
 	@Override
 	public void onSignInSucceeded() {
 
 		btn.setText("SIGN OUT");
-		Log.v(TAG, "onSignInSucceeded()");
+//		Log.v(TAG, "onSignInSucceeded()");
 	}
 
 	OnClickListener SignListener = new OnClickListener() {
@@ -2606,11 +2625,11 @@ public class WhatifActivity extends BaseGameActivity
 		public void onClick(View v) {
 
 			if (isSignedIn()) {
-				Log.v(TAG, "SignOut");
+//				Log.v(TAG, "SignOut");
 				signOut();
 				btn.setText("SIGN IN");
 			} else {
-				Log.v(TAG, "SignIn");
+//				Log.v(TAG, "SignIn");
 				beginUserInitiatedSignIn();
 				btn.setText("SIGN OUT");
 			}
@@ -2630,7 +2649,6 @@ public class WhatifActivity extends BaseGameActivity
 			// Portrait(縦長)
 			if (config.orientation == Configuration.ORIENTATION_PORTRAIT) {
 				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-
 			}
 			// Landscape(横長)
 			else if (config.orientation == Configuration.ORIENTATION_LANDSCAPE) {
