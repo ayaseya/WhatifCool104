@@ -7,11 +7,13 @@
     <!-- android:title="@string/action_settings"/> -->
     <item
         android:id="@+id/rotate"
+        android:icon="@android:drawable/ic_menu_always_landscape_portrait"
         android:orderInCategory="100"
         android:showAsAction="never"
         android:title="Rotate"/>
     <item
         android:id="@+id/ranking"
+       android:icon="@android:drawable/ic_menu_myplaces"
         android:orderInCategory="100"
         android:showAsAction="never"
         android:title="Ranking"/>
@@ -20,40 +22,42 @@
         android:orderInCategory="100"
         android:showAsAction="never"
         android:title="Send"/>
-        <item
+    <item
         android:id="@+id/sendtrophy"
         android:orderInCategory="100"
         android:showAsAction="never"
         android:title="SendTrophy"/>
     <item
         android:id="@+id/trophy"
+        android:icon="@android:drawable/star_big_on"
         android:orderInCategory="100"
         android:showAsAction="never"
         android:title="Trophy"/>
-    <item
-        android:id="@+id/RF"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="RF"/>
-    <item
-        android:id="@+id/SF"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="SF"/>
-    <item
-        android:id="@+id/FK"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="FK"/>
-    <item
-        android:id="@+id/FH"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="FH"/>
-    <item
-        android:id="@+id/FL"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="FL"/>
+    
+    <!-- <item -->
+    <!-- android:id="@+id/RF" -->
+    <!-- android:orderInCategory="100" -->
+    <!-- android:showAsAction="never" -->
+    <!-- android:title="RF"/> -->
+    <!-- <item -->
+    <!-- android:id="@+id/SF" -->
+    <!-- android:orderInCategory="100" -->
+    <!-- android:showAsAction="never" -->
+    <!-- android:title="SF"/> -->
+    <!-- <item -->
+    <!-- android:id="@+id/FK" -->
+    <!-- android:orderInCategory="100" -->
+    <!-- android:showAsAction="never" -->
+    <!-- android:title="FK"/> -->
+    <!-- <item -->
+    <!-- android:id="@+id/FH" -->
+    <!-- android:orderInCategory="100" -->
+    <!-- android:showAsAction="never" -->
+    <!-- android:title="FH"/> -->
+    <!-- <item -->
+    <!-- android:id="@+id/FL" -->
+    <!-- android:orderInCategory="100" -->
+    <!-- android:showAsAction="never" -->
+    <!-- android:title="FL"/> -->
 
 </menu>

@@ -227,11 +227,11 @@ public class WhatifActivity extends BaseGameActivity
 				ObjectInputStream ois = new ObjectInputStream(fis);
 				user = (User) ois.readObject();
 				ois.close();
-				
+
 				// 最後の起動時に横画面だった場合、横画面で起動する
-				if(user.rotate==Configuration.ORIENTATION_LANDSCAPE){
+				if (user.rotate == Configuration.ORIENTATION_LANDSCAPE) {
 					setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-					user.rotate=0;
+					user.rotate = 0;
 				}
 
 			} catch (Exception e) {
@@ -334,7 +334,6 @@ public class WhatifActivity extends BaseGameActivity
 		findViewById(R.id.sign_in_button).setOnClickListener(SignInListener);
 		findViewById(R.id.sign_out_button).setOnClickListener(SignOutListener);
 
-
 		wagerView = (TextView) findViewById(R.id.wager);//
 		winView = (TextView) findViewById(R.id.win);//
 		paidView = (TextView) findViewById(R.id.paid);//
@@ -390,8 +389,6 @@ public class WhatifActivity extends BaseGameActivity
 
 		loadCoin();
 		fixFont();
-
-
 
 		//		Log.v(TAG, "onCreate()");
 
@@ -497,6 +494,8 @@ public class WhatifActivity extends BaseGameActivity
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.whatif, menu);
+
+//		menu.findItem(R.id.rotate).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 
 		return true;
 	}// onCreateOptionsMenu()
@@ -689,12 +688,11 @@ public class WhatifActivity extends BaseGameActivity
 
 		// Portrait(縦長)
 		if (config.orientation == Configuration.ORIENTATION_PORTRAIT) {
-			
 
 		}
 		// Landscape(横長)
 		else if (config.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-			
+
 		}
 
 		wagerView.setTextSize(fontSize - 2);
@@ -2613,15 +2611,15 @@ public class WhatifActivity extends BaseGameActivity
 	// ////////////////////////////////////////////////
 	@Override
 	public void onSignInFailed() {
-		 findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
-		    findViewById(R.id.sign_out_button).setVisibility(View.GONE);
+		findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
+		findViewById(R.id.sign_out_button).setVisibility(View.GONE);
 		//		Log.v(TAG, "onSignInFailed()");
 	}
 
 	@Override
 	public void onSignInSucceeded() {
 		findViewById(R.id.sign_in_button).setVisibility(View.GONE);
-	    findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);
+		findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);
 		//		Log.v(TAG, "onSignInSucceeded()");
 	}
 
@@ -2663,154 +2661,158 @@ public class WhatifActivity extends BaseGameActivity
 				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 			}
 
-		} else if (id == R.id.RF) {
-			pokerPosition = 1;
+		}
 
-			if (pokerPosition < pokerPrevPosition) {// 現在位置が移動先よりも上にある場合
-				movement = pokerPosition - pokerPrevPosition;
-				if (movement != 0) {// 移動量が0でなければスクロール
-					bonusScroll2.smoothScrollBy(0, scrollHeight * movement);
-					paysScroll2.smoothScrollBy(0, scrollHeight * movement);
-					hitsScroll1.smoothScrollBy(0, scrollHeight * movement);
-				}
-			} else {// 現在位置が移動先よりも下にある場合
-				movement = pokerPrevPosition - pokerPosition;
-				if (movement != 0) {// 移動量が0でなければスクロール
-					bonusScroll2.smoothScrollBy(0, -scrollHeight * movement);
-					paysScroll2.smoothScrollBy(0, -scrollHeight * movement);
-					hitsScroll1.smoothScrollBy(0, -scrollHeight * movement);
-				}
-			}
+		//		else if (id == R.id.RF) {
+		//			pokerPosition = 1;
+		//
+		//			if (pokerPosition < pokerPrevPosition) {// 現在位置が移動先よりも上にある場合
+		//				movement = pokerPosition - pokerPrevPosition;
+		//				if (movement != 0) {// 移動量が0でなければスクロール
+		//					bonusScroll2.smoothScrollBy(0, scrollHeight * movement);
+		//					paysScroll2.smoothScrollBy(0, scrollHeight * movement);
+		//					hitsScroll1.smoothScrollBy(0, scrollHeight * movement);
+		//				}
+		//			} else {// 現在位置が移動先よりも下にある場合
+		//				movement = pokerPrevPosition - pokerPosition;
+		//				if (movement != 0) {// 移動量が0でなければスクロール
+		//					bonusScroll2.smoothScrollBy(0, -scrollHeight * movement);
+		//					paysScroll2.smoothScrollBy(0, -scrollHeight * movement);
+		//					hitsScroll1.smoothScrollBy(0, -scrollHeight * movement);
+		//				}
+		//			}
+		//
+		//			RFcount++;
+		//			((TextView) findViewById(R.id.hitsFlag1)).setText(String.valueOf(RFcount));
+		//			((TextView) findViewById(R.id.handBonus1)).setText(String.valueOf(ratePoker[1] * coin.getWager()));
+		//
+		//			if (ringerMode && !isPlugged) {
+		//				soundPool.play(se_coin, 0.5F, 0.5F, 0, 0, 1.0F);
+		//			} else if (isPlugged) {
+		//				soundPool.play(se_coin, 0.1F, 0.1F, 0, 0, 1.0F);
+		//			}
+		//			pokerPrevPosition = pokerPosition;
+		//
+		//		} else if (id == R.id.SF) {
+		//			pokerPosition = 2;
+		//
+		//			if (pokerPosition < pokerPrevPosition) {// 現在位置が移動先よりも上にある場合
+		//				movement = pokerPosition - pokerPrevPosition;
+		//				if (movement != 0) {// 移動量が0でなければスクロール
+		//					bonusScroll2.smoothScrollBy(0, scrollHeight * movement);
+		//					paysScroll2.smoothScrollBy(0, scrollHeight * movement);
+		//					hitsScroll1.smoothScrollBy(0, scrollHeight * movement);
+		//				}
+		//			} else {// 現在位置が移動先よりも下にある場合
+		//				movement = pokerPrevPosition - pokerPosition;
+		//				if (movement != 0) {// 移動量が0でなければスクロール
+		//					bonusScroll2.smoothScrollBy(0, -scrollHeight * movement);
+		//					paysScroll2.smoothScrollBy(0, -scrollHeight * movement);
+		//					hitsScroll1.smoothScrollBy(0, -scrollHeight * movement);
+		//				}
+		//			}
+		//
+		//			SFcount++;
+		//			((TextView) findViewById(R.id.hitsFlag2)).setText(String.valueOf(SFcount));
+		//			((TextView) findViewById(R.id.handBonus2)).setText(String.valueOf(ratePoker[2] * coin.getWager()));
+		//
+		//			if (ringerMode && !isPlugged) {
+		//				soundPool.play(se_coin, 0.5F, 0.5F, 0, 0, 1.0F);
+		//			} else if (isPlugged) {
+		//				soundPool.play(se_coin, 0.1F, 0.1F, 0, 0, 1.0F);
+		//			}
+		//			pokerPrevPosition = pokerPosition;
+		//
+		//		} else if (id == R.id.FK) {
+		//			pokerPosition = 3;
+		//
+		//			if (pokerPosition < pokerPrevPosition) {// 現在位置が移動先よりも上にある場合
+		//				movement = pokerPosition - pokerPrevPosition;
+		//				if (movement != 0) {// 移動量が0でなければスクロール
+		//					bonusScroll2.smoothScrollBy(0, scrollHeight * movement);
+		//					paysScroll2.smoothScrollBy(0, scrollHeight * movement);
+		//					hitsScroll1.smoothScrollBy(0, scrollHeight * movement);
+		//				}
+		//			} else {// 現在位置が移動先よりも下にある場合
+		//				movement = pokerPrevPosition - pokerPosition;
+		//				if (movement != 0) {// 移動量が0でなければスクロール
+		//					bonusScroll2.smoothScrollBy(0, -scrollHeight * movement);
+		//					paysScroll2.smoothScrollBy(0, -scrollHeight * movement);
+		//					hitsScroll1.smoothScrollBy(0, -scrollHeight * movement);
+		//				}
+		//			}
+		//			FKcount++;
+		//			((TextView) findViewById(R.id.hitsFlag3)).setText(String.valueOf(FKcount));
+		//			((TextView) findViewById(R.id.handBonus3)).setText(String.valueOf(ratePoker[3] * coin.getWager()));
+		//
+		//			if (ringerMode && !isPlugged) {
+		//				soundPool.play(se_coin, 0.5F, 0.5F, 0, 0, 1.0F);
+		//			} else if (isPlugged) {
+		//				soundPool.play(se_coin, 0.1F, 0.1F, 0, 0, 1.0F);
+		//			}
+		//			pokerPrevPosition = pokerPosition;
+		//
+		//		} else if (id == R.id.FH) {
+		//			pokerPosition = 4;
+		//
+		//			if (pokerPosition < pokerPrevPosition) {// 現在位置が移動先よりも上にある場合
+		//				movement = pokerPosition - pokerPrevPosition;
+		//				if (movement != 0) {// 移動量が0でなければスクロール
+		//					bonusScroll2.smoothScrollBy(0, scrollHeight * movement);
+		//					paysScroll2.smoothScrollBy(0, scrollHeight * movement);
+		//					hitsScroll1.smoothScrollBy(0, scrollHeight * movement);
+		//				}
+		//			} else {// 現在位置が移動先よりも下にある場合
+		//				movement = pokerPrevPosition - pokerPosition;
+		//				if (movement != 0) {// 移動量が0でなければスクロール
+		//					bonusScroll2.smoothScrollBy(0, -scrollHeight * movement);
+		//					paysScroll2.smoothScrollBy(0, -scrollHeight * movement);
+		//					hitsScroll1.smoothScrollBy(0, -scrollHeight * movement);
+		//				}
+		//			}
+		//			FHcount++;
+		//			((TextView) findViewById(R.id.hitsFlag4)).setText(String.valueOf(FHcount));
+		//			((TextView) findViewById(R.id.handBonus4)).setText(String.valueOf(ratePoker[4] * coin.getWager()));
+		//
+		//			if (ringerMode && !isPlugged) {
+		//				soundPool.play(se_coin, 0.5F, 0.5F, 0, 0, 1.0F);
+		//			} else if (isPlugged) {
+		//				soundPool.play(se_coin, 0.1F, 0.1F, 0, 0, 1.0F);
+		//			}
+		//			pokerPrevPosition = pokerPosition;
+		//
+		//		} else if (id == R.id.FL) {
+		//			pokerPosition = 5;
+		//
+		//			if (pokerPosition < pokerPrevPosition) {// 現在位置が移動先よりも上にある場合
+		//				movement = pokerPosition - pokerPrevPosition;
+		//				if (movement != 0) {// 移動量が0でなければスクロール
+		//					bonusScroll2.smoothScrollBy(0, scrollHeight * movement);
+		//					paysScroll2.smoothScrollBy(0, scrollHeight * movement);
+		//					hitsScroll1.smoothScrollBy(0, scrollHeight * movement);
+		//				}
+		//			} else {// 現在位置が移動先よりも下にある場合
+		//				movement = pokerPrevPosition - pokerPosition;
+		//				if (movement != 0) {// 移動量が0でなければスクロール
+		//					bonusScroll2.smoothScrollBy(0, -scrollHeight * movement);
+		//					paysScroll2.smoothScrollBy(0, -scrollHeight * movement);
+		//					hitsScroll1.smoothScrollBy(0, -scrollHeight * movement);
+		//				}
+		//			}
+		//			FLcount++;
+		//			((TextView) findViewById(R.id.hitsFlag5)).setText(String.valueOf(FLcount));
+		//			((TextView) findViewById(R.id.handBonus5)).setText(String.valueOf(ratePoker[5] * coin.getWager()));
+		//
+		//			if (ringerMode && !isPlugged) {
+		//				soundPool.play(se_coin, 0.5F, 0.5F, 0, 0, 1.0F);
+		//			} else if (isPlugged) {
+		//				soundPool.play(se_coin, 0.1F, 0.1F, 0, 0, 1.0F);
+		//			}
+		//			pokerPrevPosition = pokerPosition;
+		//
+		//		} 
 
-			RFcount++;
-			((TextView) findViewById(R.id.hitsFlag1)).setText(String.valueOf(RFcount));
-			((TextView) findViewById(R.id.handBonus1)).setText(String.valueOf(ratePoker[1] * coin.getWager()));
-
-			if (ringerMode && !isPlugged) {
-				soundPool.play(se_coin, 0.5F, 0.5F, 0, 0, 1.0F);
-			} else if (isPlugged) {
-				soundPool.play(se_coin, 0.1F, 0.1F, 0, 0, 1.0F);
-			}
-			pokerPrevPosition = pokerPosition;
-
-		} else if (id == R.id.SF) {
-			pokerPosition = 2;
-
-			if (pokerPosition < pokerPrevPosition) {// 現在位置が移動先よりも上にある場合
-				movement = pokerPosition - pokerPrevPosition;
-				if (movement != 0) {// 移動量が0でなければスクロール
-					bonusScroll2.smoothScrollBy(0, scrollHeight * movement);
-					paysScroll2.smoothScrollBy(0, scrollHeight * movement);
-					hitsScroll1.smoothScrollBy(0, scrollHeight * movement);
-				}
-			} else {// 現在位置が移動先よりも下にある場合
-				movement = pokerPrevPosition - pokerPosition;
-				if (movement != 0) {// 移動量が0でなければスクロール
-					bonusScroll2.smoothScrollBy(0, -scrollHeight * movement);
-					paysScroll2.smoothScrollBy(0, -scrollHeight * movement);
-					hitsScroll1.smoothScrollBy(0, -scrollHeight * movement);
-				}
-			}
-
-			SFcount++;
-			((TextView) findViewById(R.id.hitsFlag2)).setText(String.valueOf(SFcount));
-			((TextView) findViewById(R.id.handBonus2)).setText(String.valueOf(ratePoker[2] * coin.getWager()));
-
-			if (ringerMode && !isPlugged) {
-				soundPool.play(se_coin, 0.5F, 0.5F, 0, 0, 1.0F);
-			} else if (isPlugged) {
-				soundPool.play(se_coin, 0.1F, 0.1F, 0, 0, 1.0F);
-			}
-			pokerPrevPosition = pokerPosition;
-
-		} else if (id == R.id.FK) {
-			pokerPosition = 3;
-
-			if (pokerPosition < pokerPrevPosition) {// 現在位置が移動先よりも上にある場合
-				movement = pokerPosition - pokerPrevPosition;
-				if (movement != 0) {// 移動量が0でなければスクロール
-					bonusScroll2.smoothScrollBy(0, scrollHeight * movement);
-					paysScroll2.smoothScrollBy(0, scrollHeight * movement);
-					hitsScroll1.smoothScrollBy(0, scrollHeight * movement);
-				}
-			} else {// 現在位置が移動先よりも下にある場合
-				movement = pokerPrevPosition - pokerPosition;
-				if (movement != 0) {// 移動量が0でなければスクロール
-					bonusScroll2.smoothScrollBy(0, -scrollHeight * movement);
-					paysScroll2.smoothScrollBy(0, -scrollHeight * movement);
-					hitsScroll1.smoothScrollBy(0, -scrollHeight * movement);
-				}
-			}
-			FKcount++;
-			((TextView) findViewById(R.id.hitsFlag3)).setText(String.valueOf(FKcount));
-			((TextView) findViewById(R.id.handBonus3)).setText(String.valueOf(ratePoker[3] * coin.getWager()));
-
-			if (ringerMode && !isPlugged) {
-				soundPool.play(se_coin, 0.5F, 0.5F, 0, 0, 1.0F);
-			} else if (isPlugged) {
-				soundPool.play(se_coin, 0.1F, 0.1F, 0, 0, 1.0F);
-			}
-			pokerPrevPosition = pokerPosition;
-
-		} else if (id == R.id.FH) {
-			pokerPosition = 4;
-
-			if (pokerPosition < pokerPrevPosition) {// 現在位置が移動先よりも上にある場合
-				movement = pokerPosition - pokerPrevPosition;
-				if (movement != 0) {// 移動量が0でなければスクロール
-					bonusScroll2.smoothScrollBy(0, scrollHeight * movement);
-					paysScroll2.smoothScrollBy(0, scrollHeight * movement);
-					hitsScroll1.smoothScrollBy(0, scrollHeight * movement);
-				}
-			} else {// 現在位置が移動先よりも下にある場合
-				movement = pokerPrevPosition - pokerPosition;
-				if (movement != 0) {// 移動量が0でなければスクロール
-					bonusScroll2.smoothScrollBy(0, -scrollHeight * movement);
-					paysScroll2.smoothScrollBy(0, -scrollHeight * movement);
-					hitsScroll1.smoothScrollBy(0, -scrollHeight * movement);
-				}
-			}
-			FHcount++;
-			((TextView) findViewById(R.id.hitsFlag4)).setText(String.valueOf(FHcount));
-			((TextView) findViewById(R.id.handBonus4)).setText(String.valueOf(ratePoker[4] * coin.getWager()));
-
-			if (ringerMode && !isPlugged) {
-				soundPool.play(se_coin, 0.5F, 0.5F, 0, 0, 1.0F);
-			} else if (isPlugged) {
-				soundPool.play(se_coin, 0.1F, 0.1F, 0, 0, 1.0F);
-			}
-			pokerPrevPosition = pokerPosition;
-
-		} else if (id == R.id.FL) {
-			pokerPosition = 5;
-
-			if (pokerPosition < pokerPrevPosition) {// 現在位置が移動先よりも上にある場合
-				movement = pokerPosition - pokerPrevPosition;
-				if (movement != 0) {// 移動量が0でなければスクロール
-					bonusScroll2.smoothScrollBy(0, scrollHeight * movement);
-					paysScroll2.smoothScrollBy(0, scrollHeight * movement);
-					hitsScroll1.smoothScrollBy(0, scrollHeight * movement);
-				}
-			} else {// 現在位置が移動先よりも下にある場合
-				movement = pokerPrevPosition - pokerPosition;
-				if (movement != 0) {// 移動量が0でなければスクロール
-					bonusScroll2.smoothScrollBy(0, -scrollHeight * movement);
-					paysScroll2.smoothScrollBy(0, -scrollHeight * movement);
-					hitsScroll1.smoothScrollBy(0, -scrollHeight * movement);
-				}
-			}
-			FLcount++;
-			((TextView) findViewById(R.id.hitsFlag5)).setText(String.valueOf(FLcount));
-			((TextView) findViewById(R.id.handBonus5)).setText(String.valueOf(ratePoker[5] * coin.getWager()));
-
-			if (ringerMode && !isPlugged) {
-				soundPool.play(se_coin, 0.5F, 0.5F, 0, 0, 1.0F);
-			} else if (isPlugged) {
-				soundPool.play(se_coin, 0.1F, 0.1F, 0, 0, 1.0F);
-			}
-			pokerPrevPosition = pokerPosition;
-
-		} else if (id == R.id.ranking) {
+		else if (id == R.id.ranking) {
 
 			if (isSignedIn()) {
 
