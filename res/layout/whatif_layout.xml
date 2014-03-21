@@ -2101,17 +2101,35 @@
             <!-- android:layout_weight="1" -->
             <!-- android:text="@string/halfdouble" /> -->
 
+
+            <!-- <Button -->
+            <!-- android:id="@+id/button_sign_in_out" -->
+            <!-- android:layout_width="0dp" -->
+            <!-- android:layout_height="match_parent" -->
+            <!-- android:layout_gravity="center" -->
+            <!-- android:layout_weight="1" -->
+            <!-- android:background="@drawable/btn_signin" -->
+            <!-- android:gravity="right|center_vertical" -->
+            <!-- android:paddingRight="5dp" -->
+            <!-- android:text="SIGN IN" -->
+            <!-- android:textColor="#FFFFFF" /> -->
+
+
+            <!-- sign-in button -->
+
+            <com.google.android.gms.common.SignInButton
+                android:id="@+id/sign_in_button"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent" />
+
+            <!-- sign-out button -->
+
             <Button
-                android:id="@+id/button_sign_in_out"
-                android:layout_width="0dp"
+                android:id="@+id/sign_out_button"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:background="@drawable/btn_signin"
-                android:gravity="right|center_vertical"
-                android:paddingRight="5dp"
-                android:text="SIGN IN"
-                android:textColor="#FFFFFF" />
+                android:text="@string/sign_out"
+                android:visibility="gone" />
 
             <Button
                 android:id="@+id/betBtn"
@@ -2158,7 +2176,6 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         ads:adSize="BANNER"
-        ads:adUnitId="@string/admob_unit_id"
-        />
+        ads:adUnitId="@string/admob_unit_id" />
 
 </RelativeLayout>

@@ -130,4 +130,6 @@
 	<string name="selectAble">SELECT ABLE</string>
 	<string name="counterMsg">NUMBER OF\nSUCCCEEDED\nCARDS</string>
 	
+	<string name="sign_out">ログアウト</string>
+	
 </resources>

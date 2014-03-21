@@ -227,7 +227,12 @@ public class WhatifActivity extends BaseGameActivity
 				ObjectInputStream ois = new ObjectInputStream(fis);
 				user = (User) ois.readObject();
 				ois.close();
-							
+				
+				// 最後の起動時に横画面だった場合、横画面で起動する
+				if(user.rotate==Configuration.ORIENTATION_LANDSCAPE){
+					setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+					user.rotate=0;
+				}
 
 			} catch (Exception e) {
 				Log.d(TAG, "Error");
@@ -326,8 +331,9 @@ public class WhatifActivity extends BaseGameActivity
 
 		findViewById(R.id.msgLayout).setOnClickListener(msgListener);
 
-		findViewById(R.id.button_sign_in_out).setOnClickListener(SignListener);
-		btn = (Button) findViewById(R.id.button_sign_in_out);
+		findViewById(R.id.sign_in_button).setOnClickListener(SignInListener);
+		findViewById(R.id.sign_out_button).setOnClickListener(SignOutListener);
+
 
 		wagerView = (TextView) findViewById(R.id.wager);//
 		winView = (TextView) findViewById(R.id.win);//
@@ -352,11 +358,11 @@ public class WhatifActivity extends BaseGameActivity
 					if (intent.getIntExtra(AudioManager.EXTRA_RINGER_MODE, -1) == AudioManager.RINGER_MODE_NORMAL) {
 						// 通常モード
 						ringerMode = true;
-//						Log.v(TAG, "通常モード");
+						//						Log.v(TAG, "通常モード");
 					} else {
 						// マナーモードorサイレントモード
 						ringerMode = false;
-//						Log.v(TAG, "マナーモードorサイレントモード");
+						//						Log.v(TAG, "マナーモードorサイレントモード");
 					}
 				}
 			}
@@ -369,10 +375,10 @@ public class WhatifActivity extends BaseGameActivity
 				// 接続状態を取得
 				if (intent.getIntExtra("state", 0) > 0) {
 					isPlugged = true;
-//					Log.v(TAG, "プラグIN");
+					//					Log.v(TAG, "プラグIN");
 				} else {
 					isPlugged = false;
-//					Log.v(TAG, "プラグOUT");
+					//					Log.v(TAG, "プラグOUT");
 				}
 			}
 		};
@@ -385,13 +391,8 @@ public class WhatifActivity extends BaseGameActivity
 		loadCoin();
 		fixFont();
 
-		
-		if(coin.getCredit()==0){
-			present();
-		}
 
-		
-		
+
 		//		Log.v(TAG, "onCreate()");
 
 	}// onCreate()
@@ -409,8 +410,10 @@ public class WhatifActivity extends BaseGameActivity
 		else if (config.orientation == Configuration.ORIENTATION_LANDSCAPE) {
 			horizontal();
 		}
-		
 
+		//		if (coin.getCredit() == 0) {
+		//			present();
+		//		}
 
 		//		Log.v(TAG, "Counter=" + counter);
 		//		Log.v(TAG, "onWindowFocusChanged()");
@@ -467,6 +470,9 @@ public class WhatifActivity extends BaseGameActivity
 		unregisterReceiver(plugStateChangeReceiver);
 
 		unregisterReceiver(ringerModeStateChangeReceiver);
+
+		// 縦画面、横画面のどちらで終了したのか保存する
+		user.rotate = config.orientation;
 
 		//		Log.v(TAG, "onPause()");
 	}
@@ -594,13 +600,13 @@ public class WhatifActivity extends BaseGameActivity
 					if ((trumpViewHeight + 25 + selectAble.getHeight())
 					< findViewById(R.id.ruler).getHeight()) {
 
-//						Log.v("Test", "ruler=" + findViewById(R.id.ruler).getHeight());
-//						Log.v("Test", "selectable=" + selectAble.getHeight());
-//						Log.v("Test", "trumpViewHeight=" + trumpViewHeight);
-//						Log.v("Test", "margin=" + ((findViewById(R.id.ruler).getHeight() -
-//								(trumpViewHeight + selectAble.getHeight()))));
+						//						Log.v("Test", "ruler=" + findViewById(R.id.ruler).getHeight());
+						//						Log.v("Test", "selectable=" + selectAble.getHeight());
+						//						Log.v("Test", "trumpViewHeight=" + trumpViewHeight);
+						//						Log.v("Test", "margin=" + ((findViewById(R.id.ruler).getHeight() -
+						//								(trumpViewHeight + selectAble.getHeight()))));
 
-						lp.topMargin = findViewById(R.id.ruler).getHeight()-trumpViewHeight-selectAble.getHeight();
+						lp.topMargin = findViewById(R.id.ruler).getHeight() - trumpViewHeight - selectAble.getHeight();
 					}
 
 					if (width == 240) {
@@ -683,12 +689,12 @@ public class WhatifActivity extends BaseGameActivity
 
 		// Portrait(縦長)
 		if (config.orientation == Configuration.ORIENTATION_PORTRAIT) {
-			btn.setTextSize(fontSize - 4);
+			
 
 		}
 		// Landscape(横長)
 		else if (config.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-			btn.setTextSize(fontSize + 2);
+			
 		}
 
 		wagerView.setTextSize(fontSize - 2);
@@ -2607,33 +2613,35 @@ public class WhatifActivity extends BaseGameActivity
 	// ////////////////////////////////////////////////
 	@Override
 	public void onSignInFailed() {
-
-		btn.setText("SIGN IN");
-//		Log.v(TAG, "onSignInFailed()");
+		 findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
+		    findViewById(R.id.sign_out_button).setVisibility(View.GONE);
+		//		Log.v(TAG, "onSignInFailed()");
 	}
 
 	@Override
 	public void onSignInSucceeded() {
-
-		btn.setText("SIGN OUT");
-//		Log.v(TAG, "onSignInSucceeded()");
+		findViewById(R.id.sign_in_button).setVisibility(View.GONE);
+	    findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);
+		//		Log.v(TAG, "onSignInSucceeded()");
 	}
 
-	OnClickListener SignListener = new OnClickListener() {
+	private OnClickListener SignInListener = new OnClickListener() {
+
+		@Override
+		public void onClick(View v) {
+			beginUserInitiatedSignIn();
+
+		}
+	};
+
+	private OnClickListener SignOutListener = new OnClickListener() {
 
 		@Override
 		public void onClick(View v) {
 
-			if (isSignedIn()) {
-//				Log.v(TAG, "SignOut");
-				signOut();
-				btn.setText("SIGN IN");
-			} else {
-//				Log.v(TAG, "SignIn");
-				beginUserInitiatedSignIn();
-				btn.setText("SIGN OUT");
-			}
-
+			signOut();
+			findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
+			findViewById(R.id.sign_out_button).setVisibility(View.GONE);
 		}
 	};
 
