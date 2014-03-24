@@ -33,6 +33,14 @@
         android:orderInCategory="100"
         android:showAsAction="never"
         android:title="Trophy"/>
+ 
+        <item
+        android:id="@+id/dialog"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="Dialog"/>
+    
+    
     
     <!-- <item -->
     <!-- android:id="@+id/RF" -->

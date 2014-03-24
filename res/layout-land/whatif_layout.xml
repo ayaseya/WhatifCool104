@@ -2051,7 +2051,9 @@
                 android:id="@+id/sign_out_button"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
+                android:layout_margin="2dp"
                 android:layout_weight="1"
+                android:background="@drawable/nomal_button"
                 android:text="@string/sign_out"
                 android:visibility="gone" />
 
@@ -2060,7 +2062,9 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
+                android:layout_margin="2dp"
                 android:layout_weight="1"
+                android:background="@drawable/nomal_button"
                 android:text="@string/bet" />
 
             <Button
@@ -2068,8 +2072,11 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
+                android:layout_margin="2dp"
                 android:layout_weight="1"
+                android:background="@drawable/nomal_button"
                 android:text="@string/repeatbet" />
+
         </LinearLayout>
 
         <LinearLayout
@@ -2080,7 +2087,11 @@
                 android:id="@+id/collectBtn"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_margin="2dp"
                 android:layout_weight="1"
+                android:background="@drawable/nomal_button"
+                android:padding="5dp"
                 android:text="@string/collect" />
 
             <Button
@@ -2088,8 +2099,12 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
+                android:layout_margin="2dp"
                 android:layout_weight="1"
+                android:background="@drawable/nomal_button"
+                android:padding="5dp"
                 android:text="@string/deal" />
+
         </LinearLayout>
     </LinearLayout>
 

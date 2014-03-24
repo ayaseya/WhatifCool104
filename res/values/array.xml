@@ -197,8 +197,7 @@
         <item>paidView</item>
         <item>paid</item>
         <item>creditView</item>
-        <item>credit</item>
-        <item>sign_out_button</item>       
+        <item>credit</item>    
     </string-array>
 
 </resources>

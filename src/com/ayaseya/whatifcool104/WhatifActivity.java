@@ -10,6 +10,8 @@ import java.util.Collections;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -28,12 +30,14 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
+import android.view.ViewGroup;
 import android.view.ViewGroup.MarginLayoutParams;
 import android.view.Window;
 import android.view.WindowManager;
@@ -206,6 +210,10 @@ public class WhatifActivity extends BaseGameActivity
 	private Button btn;
 
 	private User user;
+	
+	private long start;
+	private long stop;
+	private Dialog alert;
 
 	/* ********** ********** ********** ********** */
 
@@ -2100,6 +2108,8 @@ public class WhatifActivity extends BaseGameActivity
 
 					handler.post(new Runnable() {
 
+						
+
 						@Override
 						public void run() {
 
@@ -2145,6 +2155,12 @@ public class WhatifActivity extends BaseGameActivity
 
 								present();
 							}
+							
+							
+							stop = System.currentTimeMillis();
+							long diff = stop - start;
+							Log.v(TAG, String.valueOf(diff));
+							
 							// 手札を非表示にして、メッセージ画面手札を表示する
 							findViewById(R.id.msgLayout).setVisibility(View.VISIBLE);
 							refundCoin();
@@ -2189,6 +2205,10 @@ public class WhatifActivity extends BaseGameActivity
 			msg = (TextView) findViewById(R.id.msgView1);
 			msg.setText("CONGRATULATION!");
 			msg.setTextColor(Color.YELLOW);
+			
+			stop = System.currentTimeMillis();
+			long diff = stop - start;
+			Log.v(TAG, String.valueOf(diff));
 
 			// 手札を非表示にして、メッセージ画面手札を表示する
 			findViewById(R.id.msgLayout).setVisibility(View.VISIBLE);
@@ -2256,6 +2276,9 @@ public class WhatifActivity extends BaseGameActivity
 
 			outState.putSerializable("DECK", deck);
 			outState.putSerializable("RECORD", record);
+			
+			outState.putLong("START_TIME", start);
+			
 
 		}
 	}
@@ -2281,6 +2304,8 @@ public class WhatifActivity extends BaseGameActivity
 
 			deck = (Deck) savedInstanceState.getSerializable("DECK");
 			record = (Deck) savedInstanceState.getSerializable("RECORD");
+			
+			start = savedInstanceState.getLong("START_TIME");
 
 			trumpView[0].setTrump(
 					standard.trump.get(savedInstanceState.getInt("LAYOUT")).getNumber(),
@@ -2512,6 +2537,8 @@ public class WhatifActivity extends BaseGameActivity
 	// ディールボタンをクリックした時の処理
 	OnClickListener dealBtnListener = new OnClickListener() {
 
+
+
 		@Override
 		public void onClick(View v) {
 
@@ -2535,6 +2562,10 @@ public class WhatifActivity extends BaseGameActivity
 					findViewById(R.id.btnLayout).setVisibility(View.INVISIBLE);
 
 					dealFlipTrump(1);
+					
+					start = System.currentTimeMillis();
+
+					
 				} else if (coin.getWager() >= coin.getMinbet() && counter > 0) {
 					if (ringerMode && !isPlugged) {
 						soundPool.play(se_enter, 0.5F, 0.5F, 0, 0, 1.0F);
@@ -2838,6 +2869,42 @@ public class WhatifActivity extends BaseGameActivity
 		} else if (id == R.id.sendtrophy) {
 			user.clear_count++;
 			Toast.makeText(this, "user.clear_count:" + user.clear_count, Toast.LENGTH_SHORT).show();
+		} else if (id == R.id.dialog) {
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			LayoutInflater inflater = LayoutInflater.from(WhatifActivity.this);
+			View dialog = inflater.inflate(R.layout.clear_dialog,
+					(ViewGroup) findViewById(R.id.clear_dialog));
+
+			Button closeBtn = (Button) dialog.findViewById(R.id.closeBtn);
+			closeBtn.setOnClickListener(new View.OnClickListener() {
+
+				
+
+				@Override
+				public void onClick(View arg0) {
+					alert.dismiss();
+				}
+			});
+
+			alert = new AlertDialog.Builder(WhatifActivity.this)
+			.setTitle("YOUR GAME CLEAR!")
+			.setView(dialog)
+			.show();
+		
+		
+		
+		
 		}
 
 		return super.onOptionsItemSelected(item);
