@@ -2086,6 +2086,7 @@
         android:layout_height="match_parent"
         android:layout_above="@+id/adView"
         android:layout_alignTop="@id/roundedImageView3"
+        android:layout_marginBottom="15dp"
         android:gravity="center"
         android:orientation="vertical" >
 

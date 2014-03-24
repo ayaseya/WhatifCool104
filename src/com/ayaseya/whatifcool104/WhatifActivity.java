@@ -229,7 +229,7 @@ public class WhatifActivity extends BaseGameActivity
 		File file = this.getFileStreamPath("SaveData.dat");
 		boolean isExists = file.exists();
 		if (isExists) {
-			Log.v("Test", "SaveData.datが存在しました");
+			Log.v(TAG, "> SaveData.datが存在しました");
 			try {
 				FileInputStream fis = openFileInput("SaveData.dat");
 				ObjectInputStream ois = new ObjectInputStream(fis);
@@ -598,7 +598,6 @@ public class WhatifActivity extends BaseGameActivity
 			if (config.orientation == Configuration.ORIENTATION_PORTRAIT) { // 縦画面でのマージンを設定する
 				if (i == 0) {
 					lp.topMargin = 25;
-					TextView selectAble = (TextView) findViewById(R.id.selectAble1);
 
 				} else if (i == 3) {
 					lp.topMargin = 15;
@@ -677,7 +676,7 @@ public class WhatifActivity extends BaseGameActivity
 			fontSize = (int) ((width / scale) / 45);
 		}
 
-		Log.v(TAG, "fontSize=" + fontSize);
+		Log.v(TAG, "> fontSize=" + fontSize+"sp");
 
 		String[] itemList = res.getStringArray(R.array.textView);
 
@@ -1797,7 +1796,7 @@ public class WhatifActivity extends BaseGameActivity
 			trumpViewWidth = width / 6;
 			trumpViewHeight = (int) (trumpViewWidth * 1.5);
 
-			Log.v(TAG, "trump w=" + trumpViewWidth + " h=" + trumpViewHeight);
+			Log.v(TAG, "> trump w=" + trumpViewWidth + " h=" + trumpViewHeight);
 
 			//トランプの背景画像のサイズを変更する
 			resizeTrump();
@@ -1957,7 +1956,7 @@ public class WhatifActivity extends BaseGameActivity
 			}
 
 			trumpViewWidth = (int) (trumpViewHeight / 1.5);
-			Log.v(TAG, "trump w=" + trumpViewWidth + " h=" + trumpViewHeight);
+			Log.v(TAG, "> trump w=" + trumpViewWidth + " h=" + trumpViewHeight);
 			//トランプの背景画像のサイズを変更する
 			resizeTrump();
 
