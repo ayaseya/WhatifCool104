@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -56,12 +57,19 @@ import android.widget.ViewSwitcher.ViewFactory;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.GamesClient;
+import com.google.android.gms.games.GamesStatusCodes;
+import com.google.android.gms.games.leaderboard.Leaderboards;
+import com.google.android.gms.games.leaderboard.Leaderboards.SubmitScoreResult;
+import com.google.android.gms.games.leaderboard.ScoreSubmissionData;
 import com.google.example.games.basegameutils.BaseGameActivity;
 
 public class WhatifActivity extends BaseGameActivity
-		implements ViewFactory {
+		implements ViewFactory, Leaderboards.SubmitScoreResult {
 
 	// LogCat用のタグを定数で定義する
 	public static final String TAG = "Test";
@@ -216,6 +224,8 @@ public class WhatifActivity extends BaseGameActivity
 	private long stop;
 	private Dialog alert;
 	private long clearTime;
+
+	private PendingResult<SubmitScoreResult> pr;
 
 	/* ********** ********** ********** ********** */
 
@@ -399,6 +409,42 @@ public class WhatifActivity extends BaseGameActivity
 
 		loadCoin();
 		fixFont();
+
+		pr = new PendingResult<Leaderboards.SubmitScoreResult>() {
+
+			@Override
+			public void setResultCallback(ResultCallback<SubmitScoreResult> arg0) {
+				Log.v(TAG, "setResultCallback" + arg0);
+
+			}
+
+			@Override
+			public SubmitScoreResult e(Status arg0) {
+				Log.v(TAG, "SubmitScoreResult" + arg0);
+				return null;
+			}
+
+			@Override
+			public SubmitScoreResult await(long arg0, TimeUnit arg1) {
+				Log.v(TAG, "SubmitScoreResult await" + arg0 + "|" + arg1);
+				return null;
+			}
+
+			@Override
+			public SubmitScoreResult await() {
+				Log.v(TAG, "SubmitScoreResult await");
+				return null;
+			}
+		};
+
+		ResultCallback<SubmitScoreResult> rc = new ResultCallback<Leaderboards.SubmitScoreResult>() {
+
+			@Override
+			public void onResult(SubmitScoreResult arg0) {
+				Log.v(TAG, "TonResult" + arg0);
+
+			}
+		};
 
 		//		Log.v(TAG, "onCreate()");
 
@@ -2891,12 +2937,37 @@ public class WhatifActivity extends BaseGameActivity
 		} else if (id == R.id.send) {
 
 			if (isSignedIn()) {
-				int score = 5000;
-			
+				int score = 99999999;
 
-				Games.Leaderboards.submitScore(getApiClient(), getString(R.string.lb_id), score);
+				//				Games.Leaderboards.submitScore(getApiClient(), getString(R.string.lb_id), score);
 
-				Toast.makeText(this, "TEST:成功", Toast.LENGTH_SHORT).show();
+				ResultCallback<SubmitScoreResult> rc = new ResultCallback<Leaderboards.SubmitScoreResult>() {
+
+					@Override
+					public void onResult(SubmitScoreResult arg0) {
+						Log.v(TAG, "TonResult" + arg0.getStatus());
+						Log.v(TAG, "TonResult" + arg0.getStatus().getStatusCode());
+
+						if (arg0.getStatus().getStatusCode() == GamesStatusCodes.STATUS_OK) {
+							Log.v(TAG, "STATUS_OK");//正常に送信された場合
+
+							Toast.makeText(WhatifActivity.this, "ランキングへの送信しました", Toast.LENGTH_SHORT).show();
+						} else if (arg0.getStatus().getStatusCode() == GamesStatusCodes.STATUS_NETWORK_ERROR_OPERATION_DEFERRED) {
+							Log.v(TAG, "STATUS_NETWORK_ERROR_OPERATION_DEFERRED");//端末がオフラインだった場合
+						} else if (arg0.getStatus().getStatusCode() == GamesStatusCodes.STATUS_CLIENT_RECONNECT_REQUIRED) {
+							Log.v(TAG, "STATUS_CLIENT_RECONNECT_REQUIRED");//スコア送信前に再接続が必要な場合
+						} else if (arg0.getStatus().getStatusCode() == GamesStatusCodes.STATUS_LICENSE_CHECK_FAILED) {
+							Log.v(TAG, "STATUS_LICENSE_CHECK_FAILED");//ユーザーに許可されなかった場合
+						} else if (arg0.getStatus().getStatusCode() == GamesStatusCodes.STATUS_INTERNAL_ERROR) {
+							Log.v(TAG, "STATUS_INTERNAL_ERROR");//予期しないエラーが発生した場合
+						}
+
+					}
+				};
+
+				Games.Leaderboards.submitScoreImmediate(getApiClient(), getString(R.string.lb_id), score).setResultCallback(rc);
+
+				//				Toast.makeText(this, "TEST:成功", Toast.LENGTH_SHORT).show();
 
 			}
 
@@ -2916,25 +2987,25 @@ public class WhatifActivity extends BaseGameActivity
 		return super.onOptionsItemSelected(item);
 	}
 
-	// ////////////////////////////////////////////////
+	////////////////////////////////////////////////
 	// Leaderboards.SubmitScoreResult
-	// ////////////////////////////////////////////////
+	////////////////////////////////////////////////
 
-	//	@Override
-	//	public void release() {
-	//		Log.v(TAG, "release()");
-	//	}
-	//
-	//	@Override
-	//	public Status getStatus() {
-	//		Log.v(TAG, "getStatus()");
-	//		return null;
-	//	}
-	//
-	//	@Override
-	//	public ScoreSubmissionData getScoreData() {
-	//		Log.v(TAG, "getScoreData()");
-	//		return null;
-	//	}
-	//
+	@Override
+	public void release() {
+		Log.v(TAG, "release()");
+	}
+
+	@Override
+	public Status getStatus() {
+		Log.v(TAG, "getStatus()");
+		return null;
+	}
+
+	@Override
+	public ScoreSubmissionData getScoreData() {
+		Log.v(TAG, "getScoreData()");
+		return null;
+	}
+
 }
