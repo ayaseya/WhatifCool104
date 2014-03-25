@@ -57,6 +57,7 @@ import android.widget.ViewSwitcher.ViewFactory;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.games.Games;
+import com.google.android.gms.games.GamesClient;
 import com.google.example.games.basegameutils.BaseGameActivity;
 
 public class WhatifActivity extends BaseGameActivity
@@ -210,10 +211,11 @@ public class WhatifActivity extends BaseGameActivity
 	private Button btn;
 
 	private User user;
-	
+
 	private long start;
 	private long stop;
 	private Dialog alert;
+	private long clearTime;
 
 	/* ********** ********** ********** ********** */
 
@@ -503,7 +505,7 @@ public class WhatifActivity extends BaseGameActivity
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.whatif, menu);
 
-//		menu.findItem(R.id.rotate).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+		//		menu.findItem(R.id.rotate).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 
 		return true;
 	}// onCreateOptionsMenu()
@@ -676,7 +678,7 @@ public class WhatifActivity extends BaseGameActivity
 			fontSize = (int) ((width / scale) / 45);
 		}
 
-		Log.v(TAG, "> fontSize=" + fontSize+"sp");
+		Log.v(TAG, "> fontSize=" + fontSize + "sp");
 
 		String[] itemList = res.getStringArray(R.array.textView);
 
@@ -1761,6 +1763,42 @@ public class WhatifActivity extends BaseGameActivity
 
 	}
 
+	private void callDialog() {
+		LayoutInflater inflater = LayoutInflater.from(WhatifActivity.this);
+		View dialog = inflater.inflate(R.layout.clear_dialog,
+				(ViewGroup) findViewById(R.id.clear_dialog));
+
+		Button closeBtn = (Button) dialog.findViewById(R.id.closeBtn);
+		closeBtn.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				alert.dismiss();
+			}
+		});
+
+		Button speedrunBtn = (Button) dialog.findViewById(R.id.SpeedrunBtn);
+		speedrunBtn.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				if (isSignedIn() && clearTime != 0) {
+
+					Games.Leaderboards.submitScore(getApiClient(), getString(R.string.lb_id), clearTime);
+
+					Toast.makeText(getApplicationContext(), "test", Toast.LENGTH_SHORT).show();
+				}
+
+			}
+		});
+
+		alert = new AlertDialog.Builder(WhatifActivity.this)
+				.setTitle("YOUR GAME CLEAR!")
+				.setView(dialog)
+				.show();
+
+	}
+
 	// ////////////////////////////////////////////////
 	// Vertical and Horizontal
 	// ////////////////////////////////////////////////
@@ -2107,8 +2145,6 @@ public class WhatifActivity extends BaseGameActivity
 
 					handler.post(new Runnable() {
 
-						
-
 						@Override
 						public void run() {
 
@@ -2154,12 +2190,14 @@ public class WhatifActivity extends BaseGameActivity
 
 								present();
 							}
-							
-							
+
 							stop = System.currentTimeMillis();
+
+							clearTime = stop - start;
+
 							long diff = stop - start;
 							Log.v(TAG, String.valueOf(diff));
-							
+
 							// 手札を非表示にして、メッセージ画面手札を表示する
 							findViewById(R.id.msgLayout).setVisibility(View.VISIBLE);
 							refundCoin();
@@ -2204,7 +2242,7 @@ public class WhatifActivity extends BaseGameActivity
 			msg = (TextView) findViewById(R.id.msgView1);
 			msg.setText("CONGRATULATION!");
 			msg.setTextColor(Color.YELLOW);
-			
+
 			stop = System.currentTimeMillis();
 			long diff = stop - start;
 			Log.v(TAG, String.valueOf(diff));
@@ -2275,9 +2313,8 @@ public class WhatifActivity extends BaseGameActivity
 
 			outState.putSerializable("DECK", deck);
 			outState.putSerializable("RECORD", record);
-			
+
 			outState.putLong("START_TIME", start);
-			
 
 		}
 	}
@@ -2303,7 +2340,7 @@ public class WhatifActivity extends BaseGameActivity
 
 			deck = (Deck) savedInstanceState.getSerializable("DECK");
 			record = (Deck) savedInstanceState.getSerializable("RECORD");
-			
+
 			start = savedInstanceState.getLong("START_TIME");
 
 			trumpView[0].setTrump(
@@ -2536,8 +2573,6 @@ public class WhatifActivity extends BaseGameActivity
 	// ディールボタンをクリックした時の処理
 	OnClickListener dealBtnListener = new OnClickListener() {
 
-
-
 		@Override
 		public void onClick(View v) {
 
@@ -2561,10 +2596,9 @@ public class WhatifActivity extends BaseGameActivity
 					findViewById(R.id.btnLayout).setVisibility(View.INVISIBLE);
 
 					dealFlipTrump(1);
-					
+
 					start = System.currentTimeMillis();
 
-					
 				} else if (coin.getWager() >= coin.getMinbet() && counter > 0) {
 					if (ringerMode && !isPlugged) {
 						soundPool.play(se_enter, 0.5F, 0.5F, 0, 0, 1.0F);
@@ -2672,6 +2706,8 @@ public class WhatifActivity extends BaseGameActivity
 			findViewById(R.id.sign_out_button).setVisibility(View.GONE);
 		}
 	};
+
+	private GamesClient mGamesClient;
 
 	// ////////////////////////////////////////////////
 	// /menu
@@ -2855,10 +2891,13 @@ public class WhatifActivity extends BaseGameActivity
 		} else if (id == R.id.send) {
 
 			if (isSignedIn()) {
-				int score = 3000;
+				int score = 5000;
+			
 
 				Games.Leaderboards.submitScore(getApiClient(), getString(R.string.lb_id), score);
-				showAlert("send : " + score);
+
+				Toast.makeText(this, "TEST:成功", Toast.LENGTH_SHORT).show();
+
 			}
 
 		} else if (id == R.id.trophy) {
@@ -2869,44 +2908,33 @@ public class WhatifActivity extends BaseGameActivity
 			user.clear_count++;
 			Toast.makeText(this, "user.clear_count:" + user.clear_count, Toast.LENGTH_SHORT).show();
 		} else if (id == R.id.dialog) {
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			LayoutInflater inflater = LayoutInflater.from(WhatifActivity.this);
-			View dialog = inflater.inflate(R.layout.clear_dialog,
-					(ViewGroup) findViewById(R.id.clear_dialog));
 
-			Button closeBtn = (Button) dialog.findViewById(R.id.closeBtn);
-			closeBtn.setOnClickListener(new View.OnClickListener() {
+			callDialog();
 
-				
-
-				@Override
-				public void onClick(View arg0) {
-					alert.dismiss();
-				}
-			});
-
-			alert = new AlertDialog.Builder(WhatifActivity.this)
-			.setTitle("YOUR GAME CLEAR!")
-			.setView(dialog)
-			.show();
-		
-		
-		
-		
 		}
 
 		return super.onOptionsItemSelected(item);
 	}
 
+	// ////////////////////////////////////////////////
+	// Leaderboards.SubmitScoreResult
+	// ////////////////////////////////////////////////
+
+	//	@Override
+	//	public void release() {
+	//		Log.v(TAG, "release()");
+	//	}
+	//
+	//	@Override
+	//	public Status getStatus() {
+	//		Log.v(TAG, "getStatus()");
+	//		return null;
+	//	}
+	//
+	//	@Override
+	//	public ScoreSubmissionData getScoreData() {
+	//		Log.v(TAG, "getScoreData()");
+	//		return null;
+	//	}
+	//
 }
