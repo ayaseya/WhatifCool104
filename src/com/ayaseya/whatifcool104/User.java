@@ -26,7 +26,7 @@ public class User implements Serializable {
 	public int wager = 0;
 	public int win = 0;
 	public int paid = 0;
-	public int credit = 0;
+	public int credit = 100;
 
 	public int counter = 0;
 

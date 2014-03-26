@@ -252,6 +252,7 @@ public class WhatifActivity extends BaseGameActivity
 				if (user.rotate == Configuration.ORIENTATION_LANDSCAPE) {
 					setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 					user.rotate = 0;
+					
 				}
 
 			} catch (Exception e) {
@@ -417,8 +418,19 @@ public class WhatifActivity extends BaseGameActivity
 		loading.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 		loading.setCancelable(false);
 
+
+		//		Log.v(TAG, "onCreate()");
+
+	}// onCreate()
+
+	@Override
+	public void onWindowFocusChanged(boolean hasFocus) {
+		super.onWindowFocusChanged(hasFocus);
+
+		
 		if (user.game) {
 			gameFlag = user.game;
+			
 			coin.setWager(user.wager);
 			coin.setWin(user.win);
 			coin.setPaid(user.paid);
@@ -478,17 +490,10 @@ public class WhatifActivity extends BaseGameActivity
 					standard.trump.get(user.trump5_serial).getSerial(),
 					standard.trump.get(user.trump5_serial).getColor()
 					);
-
+			Log.v(TAG, "読み込み");
 			user.game = false;
 		}
-		//		Log.v(TAG, "onCreate()");
-
-	}// onCreate()
-
-	@Override
-	public void onWindowFocusChanged(boolean hasFocus) {
-		super.onWindowFocusChanged(hasFocus);
-
+		
 		// Portrait(縦長)
 		if (config.orientation == Configuration.ORIENTATION_PORTRAIT) {
 			vertical();
@@ -605,6 +610,8 @@ public class WhatifActivity extends BaseGameActivity
 			user.record = record;
 
 			user.start = start;
+			
+			Log.v(TAG, "保存");
 		}
 
 		saveUser();
@@ -2497,7 +2504,7 @@ public class WhatifActivity extends BaseGameActivity
 		coin.setCredit(savedInstanceState.getInt("CREDIT"));
 
 		if (savedInstanceState.getBoolean("GAME")) {// 画面回転前がゲーム中なら処理をする箇所
-			gameFlag = true;
+			gameFlag = true;// onCreat()で初期化(false)するのでActivity中ではfalseにしない
 			counter = savedInstanceState.getInt("COUNTER");
 
 			RFcount = savedInstanceState.getInt("RF");
@@ -3069,7 +3076,7 @@ public class WhatifActivity extends BaseGameActivity
 			Toast.makeText(this, "user.clear_count:" + user.clear_count, Toast.LENGTH_SHORT).show();
 		} else if (id == R.id.dialog) {
 
-			callDialog();
+			present();
 
 		}
 
