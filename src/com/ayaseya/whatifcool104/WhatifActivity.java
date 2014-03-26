@@ -9,10 +9,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.TimeUnit;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -57,19 +57,16 @@ import android.widget.ViewSwitcher.ViewFactory;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.GamesClient;
 import com.google.android.gms.games.GamesStatusCodes;
 import com.google.android.gms.games.leaderboard.Leaderboards;
 import com.google.android.gms.games.leaderboard.Leaderboards.SubmitScoreResult;
-import com.google.android.gms.games.leaderboard.ScoreSubmissionData;
 import com.google.example.games.basegameutils.BaseGameActivity;
 
 public class WhatifActivity extends BaseGameActivity
-		implements ViewFactory, Leaderboards.SubmitScoreResult {
+		implements ViewFactory {
 
 	// LogCat用のタグを定数で定義する
 	public static final String TAG = "Test";
@@ -225,7 +222,10 @@ public class WhatifActivity extends BaseGameActivity
 	private Dialog alert;
 	private long clearTime;
 
-	private PendingResult<SubmitScoreResult> pr;
+	private ProgressDialog loading;
+
+	private ResultCallback<SubmitScoreResult> callback;
+
 
 	/* ********** ********** ********** ********** */
 
@@ -409,42 +409,17 @@ public class WhatifActivity extends BaseGameActivity
 
 		loadCoin();
 		fixFont();
-
-		pr = new PendingResult<Leaderboards.SubmitScoreResult>() {
-
-			@Override
-			public void setResultCallback(ResultCallback<SubmitScoreResult> arg0) {
-				Log.v(TAG, "setResultCallback" + arg0);
-
-			}
-
-			@Override
-			public SubmitScoreResult e(Status arg0) {
-				Log.v(TAG, "SubmitScoreResult" + arg0);
-				return null;
-			}
-
-			@Override
-			public SubmitScoreResult await(long arg0, TimeUnit arg1) {
-				Log.v(TAG, "SubmitScoreResult await" + arg0 + "|" + arg1);
-				return null;
-			}
-
-			@Override
-			public SubmitScoreResult await() {
-				Log.v(TAG, "SubmitScoreResult await");
-				return null;
-			}
-		};
-
-		ResultCallback<SubmitScoreResult> rc = new ResultCallback<Leaderboards.SubmitScoreResult>() {
-
-			@Override
-			public void onResult(SubmitScoreResult arg0) {
-				Log.v(TAG, "TonResult" + arg0);
-
-			}
-		};
+		
+		
+		
+		// ダイアログの設定
+		loading = new ProgressDialog(this);
+		loading.setTitle("通信中");
+		loading.setMessage("Please wait...");
+		loading.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+		loading.setCancelable(false);
+		
+		
 
 		//		Log.v(TAG, "onCreate()");
 
@@ -1809,16 +1784,19 @@ public class WhatifActivity extends BaseGameActivity
 
 	}
 
+	// ダイアログを表示する
 	private void callDialog() {
 		LayoutInflater inflater = LayoutInflater.from(WhatifActivity.this);
 		View dialog = inflater.inflate(R.layout.clear_dialog,
 				(ViewGroup) findViewById(R.id.clear_dialog));
+		
+		
 
 		Button closeBtn = (Button) dialog.findViewById(R.id.closeBtn);
 		closeBtn.setOnClickListener(new OnClickListener() {
 
 			@Override
-			public void onClick(View arg0) {
+			public void onClick(View view) {
 				alert.dismiss();
 			}
 		});
@@ -1827,22 +1805,58 @@ public class WhatifActivity extends BaseGameActivity
 		speedrunBtn.setOnClickListener(new OnClickListener() {
 
 			@Override
-			public void onClick(View v) {
-				if (isSignedIn() && clearTime != 0) {
-
-					Games.Leaderboards.submitScore(getApiClient(), getString(R.string.lb_id), clearTime);
-
-					Toast.makeText(getApplicationContext(), "test", Toast.LENGTH_SHORT).show();
-				}
-
+			public void onClick(View view) {
+				sendRanking();
 			}
 		});
 
 		alert = new AlertDialog.Builder(WhatifActivity.this)
 				.setTitle("YOUR GAME CLEAR!")
 				.setView(dialog)
+				.setCancelable(false)
 				.show();
 
+	}
+
+	// ランキングへクリアタイムを送信する
+	private void sendRanking() {
+
+		if (isSignedIn() && clearTime != 0) {
+			int score = 99999999;
+			callback = new ResultCallback<Leaderboards.SubmitScoreResult>() {
+
+				@Override
+				public void onResult(SubmitScoreResult result) {
+					Log.v(TAG, "TonResult" + result.getStatus());
+					Log.v(TAG, "TonResult" + result.getStatus().getStatusCode());
+
+					if (result.getStatus().getStatusCode() == GamesStatusCodes.STATUS_OK) {
+						Log.v(TAG, "STATUS_OK");//正常に送信された場合
+
+						Toast.makeText(WhatifActivity.this, "ランキングへクリアタイムを送信しました", Toast.LENGTH_SHORT).show();
+
+					} else if (result.getStatus().getStatusCode() == GamesStatusCodes.STATUS_NETWORK_ERROR_OPERATION_DEFERRED) {
+						Log.v(TAG, "STATUS_NETWORK_ERROR_OPERATION_DEFERRED");//端末がオフラインだった場合
+						Toast.makeText(WhatifActivity.this, "通信エラーにより送信できませんでした", Toast.LENGTH_SHORT).show();
+					} else if (result.getStatus().getStatusCode() == GamesStatusCodes.STATUS_CLIENT_RECONNECT_REQUIRED) {
+						Log.v(TAG, "STATUS_CLIENT_RECONNECT_REQUIRED");//スコア送信前に再接続が必要な場合
+						Toast.makeText(WhatifActivity.this, "通信エラーにより送信できませんでした", Toast.LENGTH_SHORT).show();
+					} else if (result.getStatus().getStatusCode() == GamesStatusCodes.STATUS_LICENSE_CHECK_FAILED) {
+						Log.v(TAG, "STATUS_LICENSE_CHECK_FAILED");//ユーザーに許可されなかった場合
+						Toast.makeText(WhatifActivity.this, "通信エラーにより送信できませんでした", Toast.LENGTH_SHORT).show();
+					} else if (result.getStatus().getStatusCode() == GamesStatusCodes.STATUS_INTERNAL_ERROR) {
+						Log.v(TAG, "STATUS_INTERNAL_ERROR");//予期しないエラーが発生した場合
+						Toast.makeText(WhatifActivity.this, "通信エラーにより送信できませんでした", Toast.LENGTH_SHORT).show();
+					}
+
+					loading.dismiss();
+
+				}
+			};
+
+			Games.Leaderboards.submitScoreImmediate(getApiClient(), getString(R.string.lb_id), clearTime).setResultCallback(callback);
+			loading.show();
+		}
 	}
 
 	// ////////////////////////////////////////////////
@@ -1935,7 +1949,7 @@ public class WhatifActivity extends BaseGameActivity
 			}
 
 			// 最前面の黒画像をフェードアウトする
-			new Thread((new Runnable() {
+			new Thread(new Runnable() {
 
 				@Override
 				public void run() {
@@ -1960,7 +1974,7 @@ public class WhatifActivity extends BaseGameActivity
 					});
 
 				}
-			})).start();
+			}).start();
 
 			//カウンター処理
 			txtSwitchOn();
@@ -2093,7 +2107,7 @@ public class WhatifActivity extends BaseGameActivity
 			}
 
 			// 最前面の黒画像をフェードアウトする
-			new Thread((new Runnable() {
+			new Thread(new Runnable() {
 
 				@Override
 				public void run() {
@@ -2118,7 +2132,7 @@ public class WhatifActivity extends BaseGameActivity
 					});
 
 				}
-			})).start();
+			}).start();
 
 			//カウンター処理
 			txtSwitchOn();
@@ -2241,8 +2255,7 @@ public class WhatifActivity extends BaseGameActivity
 
 							clearTime = stop - start;
 
-							long diff = stop - start;
-							Log.v(TAG, String.valueOf(diff));
+							callDialog();
 
 							// 手札を非表示にして、メッセージ画面手札を表示する
 							findViewById(R.id.msgLayout).setVisibility(View.VISIBLE);
@@ -2290,8 +2303,9 @@ public class WhatifActivity extends BaseGameActivity
 			msg.setTextColor(Color.YELLOW);
 
 			stop = System.currentTimeMillis();
-			long diff = stop - start;
-			Log.v(TAG, String.valueOf(diff));
+			clearTime = stop - start;
+
+			callDialog();
 
 			// 手札を非表示にして、メッセージ画面手札を表示する
 			findViewById(R.id.msgLayout).setVisibility(View.VISIBLE);
@@ -2301,6 +2315,7 @@ public class WhatifActivity extends BaseGameActivity
 		}
 
 	}
+
 
 	// ////////////////////////////////////////////////
 	// ViewFactory
@@ -2935,42 +2950,9 @@ public class WhatifActivity extends BaseGameActivity
 			}
 
 		} else if (id == R.id.send) {
-
-			if (isSignedIn()) {
-				int score = 99999999;
-
-				//				Games.Leaderboards.submitScore(getApiClient(), getString(R.string.lb_id), score);
-
-				ResultCallback<SubmitScoreResult> rc = new ResultCallback<Leaderboards.SubmitScoreResult>() {
-
-					@Override
-					public void onResult(SubmitScoreResult arg0) {
-						Log.v(TAG, "TonResult" + arg0.getStatus());
-						Log.v(TAG, "TonResult" + arg0.getStatus().getStatusCode());
-
-						if (arg0.getStatus().getStatusCode() == GamesStatusCodes.STATUS_OK) {
-							Log.v(TAG, "STATUS_OK");//正常に送信された場合
-
-							Toast.makeText(WhatifActivity.this, "ランキングへの送信しました", Toast.LENGTH_SHORT).show();
-						} else if (arg0.getStatus().getStatusCode() == GamesStatusCodes.STATUS_NETWORK_ERROR_OPERATION_DEFERRED) {
-							Log.v(TAG, "STATUS_NETWORK_ERROR_OPERATION_DEFERRED");//端末がオフラインだった場合
-						} else if (arg0.getStatus().getStatusCode() == GamesStatusCodes.STATUS_CLIENT_RECONNECT_REQUIRED) {
-							Log.v(TAG, "STATUS_CLIENT_RECONNECT_REQUIRED");//スコア送信前に再接続が必要な場合
-						} else if (arg0.getStatus().getStatusCode() == GamesStatusCodes.STATUS_LICENSE_CHECK_FAILED) {
-							Log.v(TAG, "STATUS_LICENSE_CHECK_FAILED");//ユーザーに許可されなかった場合
-						} else if (arg0.getStatus().getStatusCode() == GamesStatusCodes.STATUS_INTERNAL_ERROR) {
-							Log.v(TAG, "STATUS_INTERNAL_ERROR");//予期しないエラーが発生した場合
-						}
-
-					}
-				};
-
-				Games.Leaderboards.submitScoreImmediate(getApiClient(), getString(R.string.lb_id), score).setResultCallback(rc);
-
-				//				Toast.makeText(this, "TEST:成功", Toast.LENGTH_SHORT).show();
-
-			}
-
+			
+			sendRanking();
+		
 		} else if (id == R.id.trophy) {
 			if (isSignedIn()) {
 				startActivityForResult(Games.Achievements.getAchievementsIntent(getApiClient()), 4649);
@@ -2985,27 +2967,6 @@ public class WhatifActivity extends BaseGameActivity
 		}
 
 		return super.onOptionsItemSelected(item);
-	}
-
-	////////////////////////////////////////////////
-	// Leaderboards.SubmitScoreResult
-	////////////////////////////////////////////////
-
-	@Override
-	public void release() {
-		Log.v(TAG, "release()");
-	}
-
-	@Override
-	public Status getStatus() {
-		Log.v(TAG, "getStatus()");
-		return null;
-	}
-
-	@Override
-	public ScoreSubmissionData getScoreData() {
-		Log.v(TAG, "getScoreData()");
-		return null;
 	}
 
 }
