@@ -20,4 +20,33 @@ public class User implements Serializable {
 	public boolean FH_achievement = false;// フルハウス
 	public boolean FL_achievement = false;// フラッシュ	
 
+	// ゲーム中であった場合以下の情報を保存しておく
+	public boolean game = false;
+
+	public int wager = 0;
+	public int win = 0;
+	public int paid = 0;
+	public int credit = 0;
+
+	public int counter = 0;
+
+	public int RFcount = 0;
+	public int SFcount = 0;
+	public int FKcount = 0;
+	public int FHcount = 0;
+	public int FLcount = 0;
+
+	public int trump0_serial = 0;
+
+	public int trump1_serial = 0;
+	public int trump2_serial = 0;
+	public int trump3_serial = 0;
+	public int trump4_serial = 0;
+	public int trump5_serial = 0;
+
+	public Deck deck = null;
+	public Deck record = null;
+
+	public long start = 0;
+
 }

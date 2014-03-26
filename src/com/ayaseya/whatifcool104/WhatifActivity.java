@@ -25,6 +25,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.media.AudioManager;
 import android.media.SoundPool;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -166,7 +167,7 @@ public class WhatifActivity extends BaseGameActivity
 
 	private Deck standard;
 
-	private boolean game = false;//ゲーム中であるか否かの判断
+	private boolean gameFlag = false;//ゲーム中であるか否かの判断
 
 	private SoundPool soundPool;
 
@@ -225,7 +226,6 @@ public class WhatifActivity extends BaseGameActivity
 	private ProgressDialog loading;
 
 	private ResultCallback<SubmitScoreResult> callback;
-
 
 	/* ********** ********** ********** ********** */
 
@@ -409,18 +409,78 @@ public class WhatifActivity extends BaseGameActivity
 
 		loadCoin();
 		fixFont();
-		
-		
-		
+
 		// ダイアログの設定
 		loading = new ProgressDialog(this);
 		loading.setTitle("通信中");
 		loading.setMessage("Please wait...");
 		loading.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 		loading.setCancelable(false);
-		
-		
 
+		if (user.game) {
+			gameFlag = user.game;
+			coin.setWager(user.wager);
+			coin.setWin(user.win);
+			coin.setPaid(user.paid);
+			coin.setCredit(user.credit);
+
+			counter = user.counter;
+
+			RFcount = user.RFcount;
+			SFcount = user.SFcount;
+			FKcount = user.FKcount;
+			FHcount = user.FHcount;
+			FLcount = user.FLcount;
+
+			deck = user.deck;
+			record = user.record;
+
+			start = user.start;
+
+			trumpView[0].setTrump(
+					standard.trump.get(user.trump0_serial).getNumber(),
+					standard.trump.get(user.trump0_serial).getSuit(),
+					standard.trump.get(user.trump0_serial).getSerial(),
+					standard.trump.get(user.trump0_serial).getColor()
+					);
+
+			trumpView[1].setTrump(
+					standard.trump.get(user.trump1_serial).getNumber(),
+					standard.trump.get(user.trump1_serial).getSuit(),
+					standard.trump.get(user.trump1_serial).getSerial(),
+					standard.trump.get(user.trump1_serial).getColor()
+					);
+
+			trumpView[2].setTrump(
+					standard.trump.get(user.trump2_serial).getNumber(),
+					standard.trump.get(user.trump2_serial).getSuit(),
+					standard.trump.get(user.trump2_serial).getSerial(),
+					standard.trump.get(user.trump2_serial).getColor()
+					);
+
+			trumpView[3].setTrump(
+					standard.trump.get(user.trump3_serial).getNumber(),
+					standard.trump.get(user.trump3_serial).getSuit(),
+					standard.trump.get(user.trump3_serial).getSerial(),
+					standard.trump.get(user.trump3_serial).getColor()
+					);
+
+			trumpView[4].setTrump(
+					standard.trump.get(user.trump4_serial).getNumber(),
+					standard.trump.get(user.trump4_serial).getSuit(),
+					standard.trump.get(user.trump4_serial).getSerial(),
+					standard.trump.get(user.trump4_serial).getColor()
+					);
+
+			trumpView[5].setTrump(
+					standard.trump.get(user.trump5_serial).getNumber(),
+					standard.trump.get(user.trump5_serial).getSuit(),
+					standard.trump.get(user.trump5_serial).getSerial(),
+					standard.trump.get(user.trump5_serial).getColor()
+					);
+
+			user.game = false;
+		}
 		//		Log.v(TAG, "onCreate()");
 
 	}// onCreate()
@@ -515,10 +575,42 @@ public class WhatifActivity extends BaseGameActivity
 	protected void onDestroy() {
 		super.onDestroy();
 
+		// ゲーム中なら状態を保存しておく
+		if (findViewById(R.id.msgLayout).getVisibility() == View.INVISIBLE &&
+				findViewById(R.id.btnLayout).getVisibility() == View.INVISIBLE) {
+
+			user.wager = coin.getWager();
+			user.win = coin.getWin();
+			user.paid = coin.getPaid();
+			user.credit = coin.getCredit();
+
+			user.game = true;
+			user.counter = counter;
+
+			user.RFcount = RFcount;
+			user.SFcount = SFcount;
+			user.FKcount = FKcount;
+			user.FHcount = FHcount;
+			user.FLcount = FLcount;
+
+			user.trump0_serial = trumpView[0].getSerial();
+
+			user.trump1_serial = trumpView[1].getSerial();
+			user.trump2_serial = trumpView[2].getSerial();
+			user.trump3_serial = trumpView[3].getSerial();
+			user.trump4_serial = trumpView[4].getSerial();
+			user.trump5_serial = trumpView[5].getSerial();
+
+			user.deck = deck;
+			user.record = record;
+
+			user.start = start;
+		}
+
 		saveUser();
 
 		saveCoin();
-		//		Log.v(TAG, "onDestroy()");
+//		Log.v(TAG, "onDestroy()");
 	}
 
 	@Override
@@ -1789,8 +1881,6 @@ public class WhatifActivity extends BaseGameActivity
 		LayoutInflater inflater = LayoutInflater.from(WhatifActivity.this);
 		View dialog = inflater.inflate(R.layout.clear_dialog,
 				(ViewGroup) findViewById(R.id.clear_dialog));
-		
-		
 
 		Button closeBtn = (Button) dialog.findViewById(R.id.closeBtn);
 		closeBtn.setOnClickListener(new OnClickListener() {
@@ -1807,6 +1897,24 @@ public class WhatifActivity extends BaseGameActivity
 			@Override
 			public void onClick(View view) {
 				sendRanking();
+			}
+		});
+
+		Button twitterBtn = (Button) dialog.findViewById(R.id.Twitter);
+		twitterBtn.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View view) {
+
+				// ミリ秒で計測した時間を時分秒形式に変換
+
+				long minutes = (clearTime / 1000) / 60;
+				long seconds = (clearTime / 1000) % 60;
+
+				String tweet = res.getString(R.string.app_name) + "を" + minutes + "分" + seconds + "秒でクリアしました";
+				String url = "http://twitter.com/share?text=" + tweet;
+				Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+				startActivity(intent);
 			}
 		});
 
@@ -1831,21 +1939,21 @@ public class WhatifActivity extends BaseGameActivity
 					Log.v(TAG, "TonResult" + result.getStatus().getStatusCode());
 
 					if (result.getStatus().getStatusCode() == GamesStatusCodes.STATUS_OK) {
-						Log.v(TAG, "STATUS_OK");//正常に送信された場合
+						//						Log.v(TAG, "STATUS_OK");//正常に送信された場合
 
 						Toast.makeText(WhatifActivity.this, "ランキングへクリアタイムを送信しました", Toast.LENGTH_SHORT).show();
 
 					} else if (result.getStatus().getStatusCode() == GamesStatusCodes.STATUS_NETWORK_ERROR_OPERATION_DEFERRED) {
-						Log.v(TAG, "STATUS_NETWORK_ERROR_OPERATION_DEFERRED");//端末がオフラインだった場合
+						//						Log.v(TAG, "STATUS_NETWORK_ERROR_OPERATION_DEFERRED");//端末がオフラインだった場合
 						Toast.makeText(WhatifActivity.this, "通信エラーにより送信できませんでした", Toast.LENGTH_SHORT).show();
 					} else if (result.getStatus().getStatusCode() == GamesStatusCodes.STATUS_CLIENT_RECONNECT_REQUIRED) {
-						Log.v(TAG, "STATUS_CLIENT_RECONNECT_REQUIRED");//スコア送信前に再接続が必要な場合
+						//						Log.v(TAG, "STATUS_CLIENT_RECONNECT_REQUIRED");//スコア送信前に再接続が必要な場合
 						Toast.makeText(WhatifActivity.this, "通信エラーにより送信できませんでした", Toast.LENGTH_SHORT).show();
 					} else if (result.getStatus().getStatusCode() == GamesStatusCodes.STATUS_LICENSE_CHECK_FAILED) {
-						Log.v(TAG, "STATUS_LICENSE_CHECK_FAILED");//ユーザーに許可されなかった場合
+						//						Log.v(TAG, "STATUS_LICENSE_CHECK_FAILED");//ユーザーに許可されなかった場合
 						Toast.makeText(WhatifActivity.this, "通信エラーにより送信できませんでした", Toast.LENGTH_SHORT).show();
 					} else if (result.getStatus().getStatusCode() == GamesStatusCodes.STATUS_INTERNAL_ERROR) {
-						Log.v(TAG, "STATUS_INTERNAL_ERROR");//予期しないエラーが発生した場合
+						//						Log.v(TAG, "STATUS_INTERNAL_ERROR");//予期しないエラーが発生した場合
 						Toast.makeText(WhatifActivity.this, "通信エラーにより送信できませんでした", Toast.LENGTH_SHORT).show();
 					}
 
@@ -1917,7 +2025,7 @@ public class WhatifActivity extends BaseGameActivity
 			}
 
 			// 山札から5枚トランプの情報を読み込む
-			if (!game) {
+			if (!gameFlag) {
 				for (int i = 1; i <= 5; i++) {
 					trumpView[i].setTrump(deck.trump.get(i - 1).getNumber(),
 							deck.trump.get(i - 1).getSuit(),
@@ -1992,10 +2100,10 @@ public class WhatifActivity extends BaseGameActivity
 				redrawCoin();
 			}
 
-			if (game) {
+			if (gameFlag) {
 
 				findViewById(R.id.btnLayout).setVisibility(View.INVISIBLE);
-				// トランプ画像を非表示にする
+				// トランプ画像を表示にする
 				for (int i = 0; i <= 5; i++) {
 					trumpView[i].setVisibility(View.VISIBLE);
 				}
@@ -2076,7 +2184,7 @@ public class WhatifActivity extends BaseGameActivity
 			}
 
 			// 山札から5枚トランプの情報を読み込む
-			if (!game) {
+			if (!gameFlag) {
 
 				for (int i = 1; i <= 5; i++) {
 					trumpView[i].setTrump(deck.trump.get(i - 1).getNumber(),
@@ -2163,7 +2271,7 @@ public class WhatifActivity extends BaseGameActivity
 				redrawCoin();
 			}
 
-			if (game) {
+			if (gameFlag) {
 
 				findViewById(R.id.btnLayout).setVisibility(View.INVISIBLE);
 				// トランプ画像を非表示にする
@@ -2316,7 +2424,6 @@ public class WhatifActivity extends BaseGameActivity
 
 	}
 
-
 	// ////////////////////////////////////////////////
 	// ViewFactory
 	// ////////////////////////////////////////////////
@@ -2390,7 +2497,7 @@ public class WhatifActivity extends BaseGameActivity
 		coin.setCredit(savedInstanceState.getInt("CREDIT"));
 
 		if (savedInstanceState.getBoolean("GAME")) {// 画面回転前がゲーム中なら処理をする箇所
-			game = true;
+			gameFlag = true;
 			counter = savedInstanceState.getInt("COUNTER");
 
 			RFcount = savedInstanceState.getInt("RF");
@@ -2950,9 +3057,9 @@ public class WhatifActivity extends BaseGameActivity
 			}
 
 		} else if (id == R.id.send) {
-			
+
 			sendRanking();
-		
+
 		} else if (id == R.id.trophy) {
 			if (isSignedIn()) {
 				startActivityForResult(Games.Achievements.getAchievementsIntent(getApiClient()), 4649);
