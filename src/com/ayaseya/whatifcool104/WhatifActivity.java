@@ -60,7 +60,6 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.games.Games;
-import com.google.android.gms.games.GamesClient;
 import com.google.android.gms.games.GamesStatusCodes;
 import com.google.android.gms.games.leaderboard.Leaderboards;
 import com.google.android.gms.games.leaderboard.Leaderboards.SubmitScoreResult;
@@ -108,6 +107,12 @@ public class WhatifActivity extends BaseGameActivity
 	private enum DPI {
 		ldpi, mdpi, hdpi, xhdpi, xxhdpi
 	}
+
+	private enum GAME {
+		WIN, LOSE, DRAW
+	}
+
+	private GAME result;
 
 	private DPI dpi;
 	private boolean coinFlag = false;// trueでコインの加算処理中のため入力を受け付けないようにする
@@ -168,6 +173,8 @@ public class WhatifActivity extends BaseGameActivity
 	private Deck standard;
 
 	private boolean gameFlag = false;//ゲーム中であるか否かの判断
+
+	private boolean doubleDownGameFlag = false;//ゲーム中であるか否かの判断
 
 	private SoundPool soundPool;
 
@@ -252,7 +259,7 @@ public class WhatifActivity extends BaseGameActivity
 				if (user.rotate == Configuration.ORIENTATION_LANDSCAPE) {
 					setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 					user.rotate = 0;
-					
+
 				}
 
 			} catch (Exception e) {
@@ -344,7 +351,12 @@ public class WhatifActivity extends BaseGameActivity
 		trumpView[4].setOnClickListener(hand4Listener);
 		trumpView[5].setOnClickListener(hand5Listener);
 
-		findViewById(R.id.collectBtn).setOnClickListener(collectBtnListener);
+		trumpBackView[2].setOnClickListener(back2Listener);
+		trumpBackView[3].setOnClickListener(back3Listener);
+		trumpBackView[4].setOnClickListener(back4Listener);
+		trumpBackView[5].setOnClickListener(back5Listener);
+
+		findViewById(R.id.cancelBtn).setOnClickListener(collectBtnListener);
 		//		findViewById(R.id.hdBtn).setOnClickListener(hbBtnListener);
 		findViewById(R.id.betBtn).setOnClickListener(betBtnListener);
 		findViewById(R.id.repeatBtn).setOnClickListener(repeatBtnListener);
@@ -418,7 +430,6 @@ public class WhatifActivity extends BaseGameActivity
 		loading.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 		loading.setCancelable(false);
 
-
 		//		Log.v(TAG, "onCreate()");
 
 	}// onCreate()
@@ -427,10 +438,9 @@ public class WhatifActivity extends BaseGameActivity
 	public void onWindowFocusChanged(boolean hasFocus) {
 		super.onWindowFocusChanged(hasFocus);
 
-		
 		if (user.game) {
 			gameFlag = user.game;
-			
+
 			coin.setWager(user.wager);
 			coin.setWin(user.win);
 			coin.setPaid(user.paid);
@@ -493,7 +503,7 @@ public class WhatifActivity extends BaseGameActivity
 			Log.v(TAG, "読み込み");
 			user.game = false;
 		}
-		
+
 		// Portrait(縦長)
 		if (config.orientation == Configuration.ORIENTATION_PORTRAIT) {
 			vertical();
@@ -610,14 +620,14 @@ public class WhatifActivity extends BaseGameActivity
 			user.record = record;
 
 			user.start = start;
-			
+
 			Log.v(TAG, "保存");
 		}
 
 		saveUser();
 
 		saveCoin();
-//		Log.v(TAG, "onDestroy()");
+		//		Log.v(TAG, "onDestroy()");
 	}
 
 	@Override
@@ -869,6 +879,76 @@ public class WhatifActivity extends BaseGameActivity
 				});
 			}
 		});
+
+	}
+
+	// トランプ1枚をアニメーションの処理(アニメーション開始の遅れを引数で指定する)
+	private void FlipTrump(final int index, final long time) {
+
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+
+				try {
+					Thread.sleep(time);
+
+					handler.post(new Runnable() {
+
+						@Override
+						public void run() {
+
+							// アニメーション中にクリックできないようfalseに変更する
+							flipAnimFlag = false;
+							// 現在表示されているトランプ画像を非表示にする
+							trumpBackView[index].setVisibility(View.INVISIBLE);
+
+							// Y軸回転(0～90度)
+							Rotate3dAnimation rotation = new Rotate3dAnimation(0, 90, centerX, centerY, 0f, true);
+							rotation.setDuration(timeFlip);
+
+							trumpBackView[index].startAnimation(rotation);
+
+							if (ringerMode && !isPlugged) {
+								soundPool.play(se_trump_flip, 0.5F, 0.5F, 0, 0, 1.0F);
+							} else if (isPlugged) {
+								soundPool.play(se_trump_flip, 0.1F, 0.1F, 0, 0, 1.0F);
+							}
+
+							rotation.setAnimationListener(new TrumpAnimationListener(index) {
+								// 裏面が回転し終わり表面が回転し始める
+								@Override
+								public void onAnimationEnd(Animation animation) {
+
+									// Y軸回転(270～360度)
+									Rotate3dAnimation rotation = new Rotate3dAnimation(270, 360, centerX, centerY, 0f, false);
+
+									rotation.setDuration(timeFlip);
+									trumpView[index].startAnimation(rotation);
+									rotation.setAnimationListener(new TrumpAnimationListener(index) {
+										@Override
+										public void onAnimationEnd(Animation animation) {
+											// アニメーションの終了
+											trumpView[index].setVisibility(View.VISIBLE);
+											flipAnimFlag = true;
+
+											checkVisibility();
+										}
+									});
+								}
+							});
+
+						}
+
+					});
+
+				} catch (InterruptedException e1) {
+					e1.printStackTrace();
+				}
+
+			}
+
+		}).start();
 
 	}
 
@@ -1676,7 +1756,8 @@ public class WhatifActivity extends BaseGameActivity
 	private void redrawCoin() {
 		wagerView.setText(String.valueOf(coin.getWager()));
 		winView.setText(String.valueOf(coin.getWin()));
-		paidView.setText(String.valueOf(coin.getPaid()));
+		//		paidView.setText(String.valueOf(coin.getPaid()));
+		paidView.setText("0");
 		creditView.setText(String.valueOf(coin.getCredit()));
 	}
 
@@ -2114,6 +2195,11 @@ public class WhatifActivity extends BaseGameActivity
 				for (int i = 0; i <= 5; i++) {
 					trumpView[i].setVisibility(View.VISIBLE);
 				}
+
+				if (counter == 0) {
+					trumpView[0].setVisibility(View.INVISIBLE);
+				}
+
 				selectAble();
 			}
 
@@ -2285,6 +2371,10 @@ public class WhatifActivity extends BaseGameActivity
 				for (int i = 0; i <= 5; i++) {
 					trumpView[i].setVisibility(View.VISIBLE);
 				}
+
+				if (counter == 0) {
+					trumpView[0].setVisibility(View.INVISIBLE);
+				}
 				selectAble();
 			}
 
@@ -2323,60 +2413,7 @@ public class WhatifActivity extends BaseGameActivity
 						@Override
 						public void run() {
 
-							coin.setBeforeWager(coin.getWager());
-
-							for (int i = 1; i < 6; i++) {
-								trumpView[i].setVisibility(View.INVISIBLE);
-							}
-
-							msg = (TextView) findViewById(R.id.msgView1);
-
-							if (coin.getWager() < calculateCoin()) {
-
-								if (ringerMode && !isPlugged) {
-									soundPool.play(se_winner, 0.5F, 0.5F, 0, 0, 1.0F);
-								} else if (isPlugged) {
-									soundPool.play(se_winner, 0.1F, 0.1F, 0, 0, 1.0F);
-								}
-
-								msg.setText("WINNER!");
-								msg.setTextColor(Color.RED);
-							}
-							else if (coin.getWager() == calculateCoin()) {
-
-								if (ringerMode && !isPlugged) {
-									soundPool.play(se_even, 0.5F, 0.5F, 0, 0, 1.0F);
-								} else if (isPlugged) {
-									soundPool.play(se_even, 0.1F, 0.1F, 0, 0, 1.0F);
-								}
-
-								msg.setText("DRAW!");
-								msg.setTextColor(Color.GREEN);
-							}
-							else {
-								if (ringerMode && !isPlugged) {
-									soundPool.play(se_loser, 0.5F, 0.5F, 0, 0, 1.0F);
-								} else if (isPlugged) {
-									soundPool.play(se_loser, 0.1F, 0.1F, 0, 0, 1.0F);
-								}
-
-								msg.setText("LOSER!");
-								msg.setTextColor(Color.BLUE);
-
-								present();
-							}
-
-							stop = System.currentTimeMillis();
-
-							clearTime = stop - start;
-
-							callDialog();
-
-							// 手札を非表示にして、メッセージ画面手札を表示する
-							findViewById(R.id.msgLayout).setVisibility(View.VISIBLE);
-							refundCoin();
-
-							//Toast.makeText(WhatifActivity.this, "ＧＡＭＥ ＯＶＥＲ", Toast.LENGTH_SHORT).show();
+							doubleDown();
 
 						}
 
@@ -2390,6 +2427,87 @@ public class WhatifActivity extends BaseGameActivity
 			}
 
 		}).start();
+
+		//		new Thread(new Runnable() {
+		//
+		//			@Override
+		//			public void run() {
+		//
+		//				try {
+		//					Thread.sleep(msgSleepTime);
+		//
+		//					handler.post(new Runnable() {
+		//
+		//						@Override
+		//						public void run() {
+		//
+		//							coin.setBeforeWager(coin.getWager());
+		//
+		//							for (int i = 1; i < 6; i++) {
+		//								trumpView[i].setVisibility(View.INVISIBLE);
+		//							}
+		//
+		//							msg = (TextView) findViewById(R.id.msgView1);
+		//
+		//							if (coin.getWager() < calculateCoin()) {
+		//
+		//								if (ringerMode && !isPlugged) {
+		//									soundPool.play(se_winner, 0.5F, 0.5F, 0, 0, 1.0F);
+		//								} else if (isPlugged) {
+		//									soundPool.play(se_winner, 0.1F, 0.1F, 0, 0, 1.0F);
+		//								}
+		//
+		//								msg.setText("WINNER!");
+		//								msg.setTextColor(Color.RED);
+		//							}
+		//							else if (coin.getWager() == calculateCoin()) {
+		//
+		//								if (ringerMode && !isPlugged) {
+		//									soundPool.play(se_even, 0.5F, 0.5F, 0, 0, 1.0F);
+		//								} else if (isPlugged) {
+		//									soundPool.play(se_even, 0.1F, 0.1F, 0, 0, 1.0F);
+		//								}
+		//
+		//								msg.setText("DRAW!");
+		//								msg.setTextColor(Color.GREEN);
+		//							}
+		//							else {
+		//								if (ringerMode && !isPlugged) {
+		//									soundPool.play(se_loser, 0.5F, 0.5F, 0, 0, 1.0F);
+		//								} else if (isPlugged) {
+		//									soundPool.play(se_loser, 0.1F, 0.1F, 0, 0, 1.0F);
+		//								}
+		//
+		//								msg.setText("LOSER!");
+		//								msg.setTextColor(Color.BLUE);
+		//
+		//								present();
+		//							}
+		//
+		//							stop = System.currentTimeMillis();
+		//
+		//							clearTime = stop - start;
+		//
+		//							// callDialog();
+		//
+		//							// 手札を非表示にして、メッセージ画面手札を表示する
+		//							findViewById(R.id.msgLayout).setVisibility(View.VISIBLE);
+		//							refundCoin();
+		//
+		//							//Toast.makeText(WhatifActivity.this, "ＧＡＭＥ ＯＶＥＲ", Toast.LENGTH_SHORT).show();
+		//
+		//						}
+		//
+		//					});
+		//
+		//				} catch (InterruptedException e1) {
+		//					// TODO 自動生成された catch ブロック
+		//					e1.printStackTrace();
+		//				}
+		//
+		//			}
+		//
+		//		}).start();
 
 	}// GameOver_**********
 
@@ -2581,7 +2699,7 @@ public class WhatifActivity extends BaseGameActivity
 		@Override
 		public void onClick(View v) {
 
-			if (dealAnimFlag && flipAnimFlag && moveAnimFlag && agreeTrump(1)) {
+			if (dealAnimFlag && flipAnimFlag && moveAnimFlag && agreeTrump(1) && !doubleDownGameFlag) {
 				if (ringerMode && !isPlugged) {
 					soundPool.play(se_trump_select, 0.5F, 0.5F, 0, 0, 1.0F);
 				} else if (isPlugged) {
@@ -2599,7 +2717,7 @@ public class WhatifActivity extends BaseGameActivity
 		@Override
 		public void onClick(View v) {
 
-			if (dealAnimFlag && flipAnimFlag && moveAnimFlag && agreeTrump(2)) {
+			if (dealAnimFlag && flipAnimFlag && moveAnimFlag && agreeTrump(2) && !doubleDownGameFlag) {
 				if (ringerMode && !isPlugged) {
 					soundPool.play(se_trump_select, 0.5F, 0.5F, 0, 0, 1.0F);
 				} else if (isPlugged) {
@@ -2616,7 +2734,7 @@ public class WhatifActivity extends BaseGameActivity
 		@Override
 		public void onClick(View v) {
 
-			if (dealAnimFlag && flipAnimFlag && moveAnimFlag && agreeTrump(3)) {
+			if (dealAnimFlag && flipAnimFlag && moveAnimFlag && agreeTrump(3) && !doubleDownGameFlag) {
 				if (ringerMode && !isPlugged) {
 					soundPool.play(se_trump_select, 0.5F, 0.5F, 0, 0, 1.0F);
 				} else if (isPlugged) {
@@ -2633,7 +2751,7 @@ public class WhatifActivity extends BaseGameActivity
 		@Override
 		public void onClick(View v) {
 
-			if (dealAnimFlag && flipAnimFlag && moveAnimFlag && agreeTrump(4)) {
+			if (dealAnimFlag && flipAnimFlag && moveAnimFlag && agreeTrump(4) && !doubleDownGameFlag) {
 				if (ringerMode && !isPlugged) {
 					soundPool.play(se_trump_select, 0.5F, 0.5F, 0, 0, 1.0F);
 				} else if (isPlugged) {
@@ -2650,7 +2768,7 @@ public class WhatifActivity extends BaseGameActivity
 		@Override
 		public void onClick(View v) {
 
-			if (dealAnimFlag && flipAnimFlag && moveAnimFlag && agreeTrump(5)) {
+			if (dealAnimFlag && flipAnimFlag && moveAnimFlag && agreeTrump(5) && !doubleDownGameFlag) {
 				if (ringerMode && !isPlugged) {
 					soundPool.play(se_trump_select, 0.5F, 0.5F, 0, 0, 1.0F);
 				} else if (isPlugged) {
@@ -2882,14 +3000,12 @@ public class WhatifActivity extends BaseGameActivity
 		}
 	};
 
-	private GamesClient mGamesClient;
-
 	// ////////////////////////////////////////////////
 	// /menu
 	// ////////////////////////////////////////////////	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		int movement = 0;
+		//		int movement = 0;
 		int id = item.getItemId();
 
 		if (id == R.id.rotate) {
@@ -3063,24 +3179,384 @@ public class WhatifActivity extends BaseGameActivity
 				showAlert("Please sign in to view leaderboards.");
 			}
 
-		} else if (id == R.id.send) {
-
-			sendRanking();
-
-		} else if (id == R.id.trophy) {
+		}
+		//		else if (id == R.id.send) {
+		//
+		//			sendRanking();
+		//
+		//		} 
+		else if (id == R.id.trophy) {
 			if (isSignedIn()) {
 				startActivityForResult(Games.Achievements.getAchievementsIntent(getApiClient()), 4649);
 			}
 		} else if (id == R.id.sendtrophy) {
 			user.clear_count++;
 			Toast.makeText(this, "user.clear_count:" + user.clear_count, Toast.LENGTH_SHORT).show();
-		} else if (id == R.id.dialog) {
-
-			present();
-
 		}
+		//		else if (id == R.id.dialog) {
+		//
+		//			present();
+		//
+		//		}
 
 		return super.onOptionsItemSelected(item);
 	}
+
+	// ////////////////////////////////////////////////
+	// /DoubleDown
+	// ////////////////////////////////////////////////	
+
+	private void doubleDown() {
+		//		if(counter>=14){
+		doubleDownGameFlag = true;
+		if (counter >= 1) {
+			Deck dealer = new Deck(this);
+			dealer.shuffle(this);
+
+			// 手札を非表示にする
+			for (int i = 0; i < 6; i++) {
+				trumpView[i].setVisibility(View.INVISIBLE);
+			}
+
+			// カードを裏面の状態で配る
+			for (int i = 1; i < 6; i++) {
+				trumpBackView[i].setVisibility(View.VISIBLE);
+			}
+
+			// DEALERの選択した手札の下に"DEALER"TextViewを表示する
+			((TextView) findViewById(R.id.dealer)).setVisibility(View.VISIBLE);
+
+			// 山札から5枚トランプの情報を読み込む
+
+			for (int i = 1; i <= 5; i++) {
+				trumpView[i].setTrump(dealer.trump.get(i - 1).getNumber(),
+						dealer.trump.get(i - 1).getSuit(),
+						dealer.trump.get(i - 1).getSerial(),
+						dealer.trump.get(i - 1).getColor());
+			}
+
+			// DEALERの選択した手札を裏返す
+
+			FlipTrump(1);
+
+		}
+
+	}
+
+	// 手札5枚がすべて表示状態になっているかをチェック
+	private void checkVisibility() {
+
+		if (trumpView[2].getVisibility() == View.INVISIBLE) {
+			return;
+		} else if (trumpView[3].getVisibility() == View.INVISIBLE) {
+			return;
+		} else if (trumpView[4].getVisibility() == View.INVISIBLE) {
+			return;
+		} else if (trumpView[5].getVisibility() == View.INVISIBLE) {
+			return;
+		}
+
+		int dealer = trumpView[1].getNumber();
+		int player = 0;
+
+		// DEALERが最強の数字Aであるかを確認しAだった場合、14に置き換える
+
+		if (dealer == 1) {
+			dealer = 14;
+		}
+		if (((TextView)findViewById(R.id.player2)).getVisibility() == View.VISIBLE) {
+
+			player = trumpView[2].getNumber();
+
+			if (player == 1) {
+				player = 14;
+			}
+
+			if (dealer > player) {
+				result = GAME.LOSE;
+			} else if (dealer < player) {
+				result = GAME.WIN;
+			} else if (dealer == player) {
+				result = GAME.DRAW;
+			}
+
+		} else if (((TextView)findViewById(R.id.player3)).getVisibility() == View.VISIBLE) {
+			player = trumpView[3].getNumber();
+
+			if (player == 1) {
+				player = 14;
+			}
+
+			if (dealer > player) {
+				result = GAME.LOSE;
+			} else if (dealer < player) {
+				result = GAME.WIN;
+			} else if (dealer == player) {
+				result = GAME.DRAW;
+			}
+
+		} else if (((TextView)findViewById(R.id.player4)).getVisibility() == View.VISIBLE) {
+
+			player = trumpView[4].getNumber();
+
+			if (player == 1) {
+				player = 14;
+			}
+
+			if (dealer > player) {
+				result = GAME.LOSE;
+			} else if (dealer < player) {
+				result = GAME.WIN;
+			} else if (dealer == player) {
+				result = GAME.DRAW;
+			}
+
+		} else if (((TextView)findViewById(R.id.player5)).getVisibility() == View.VISIBLE) {
+
+			player = trumpView[5].getNumber();
+
+			if (player == 1) {
+				player = 14;
+			}
+
+			if (dealer > player) {
+				result = GAME.LOSE;
+			} else if (dealer < player) {
+				result = GAME.WIN;
+			} else if (dealer == player) {
+				result = GAME.DRAW;
+			}
+
+		}
+
+		if (result != GAME.WIN) {
+			
+			Log.v(TAG, "result="+result);
+			return;
+		}
+		
+		Log.v("Test", "CheckPoint");
+
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+
+				try {
+					Thread.sleep(500);
+
+					handler.post(new Runnable() {
+
+						@Override
+						public void run() {
+
+							LayoutInflater inflater = LayoutInflater.from(WhatifActivity.this);
+							View dialog = inflater.inflate(R.layout.double_down_dialog,
+									(ViewGroup) findViewById(R.id.double_down_dialog));
+
+							((TextView) dialog.findViewById(R.id.coinView)).setText(
+									"YOU GET " + calculateCoin() + " COINS");
+
+							((Button) dialog.findViewById(R.id.collectBtn))
+									.setOnClickListener(new OnClickListener() {
+
+										@Override
+										public void onClick(View view) {
+
+											// 手札を非表示にする
+											for (int i = 1; i < 6; i++) {
+												trumpView[i].setVisibility(View.INVISIBLE);
+											}
+
+											((TextView) findViewById(R.id.dealer)).setVisibility(View.INVISIBLE);
+											((TextView) findViewById(R.id.player2)).setVisibility(View.INVISIBLE);
+											((TextView) findViewById(R.id.player3)).setVisibility(View.INVISIBLE);
+											((TextView) findViewById(R.id.player4)).setVisibility(View.INVISIBLE);
+											((TextView) findViewById(R.id.player5)).setVisibility(View.INVISIBLE);
+
+											alert.dismiss();
+										}
+									});
+
+							((Button) dialog.findViewById(R.id.doubleBtn))
+									.setOnClickListener(new OnClickListener() {
+
+										@Override
+										public void onClick(View view) {
+											// 手札を非表示にする
+											for (int i = 1; i < 6; i++) {
+												trumpView[i].setVisibility(View.INVISIBLE);
+											}
+
+											((TextView) findViewById(R.id.dealer)).setVisibility(View.INVISIBLE);
+											((TextView) findViewById(R.id.player2)).setVisibility(View.INVISIBLE);
+											((TextView) findViewById(R.id.player3)).setVisibility(View.INVISIBLE);
+											((TextView) findViewById(R.id.player4)).setVisibility(View.INVISIBLE);
+											((TextView) findViewById(R.id.player5)).setVisibility(View.INVISIBLE);
+
+											alert.dismiss();
+										}
+									});
+
+							((Button) dialog.findViewById(R.id.halfBtn))
+									.setOnClickListener(new OnClickListener() {
+
+										@Override
+										public void onClick(View view) {
+											// 手札を非表示にする
+											for (int i = 1; i < 6; i++) {
+												trumpView[i].setVisibility(View.INVISIBLE);
+											}
+
+											((TextView) findViewById(R.id.dealer)).setVisibility(View.INVISIBLE);
+											((TextView) findViewById(R.id.player2)).setVisibility(View.INVISIBLE);
+											((TextView) findViewById(R.id.player3)).setVisibility(View.INVISIBLE);
+											((TextView) findViewById(R.id.player4)).setVisibility(View.INVISIBLE);
+											((TextView) findViewById(R.id.player5)).setVisibility(View.INVISIBLE);
+
+											alert.dismiss();
+										}
+									});
+
+							alert = new AlertDialog.Builder(WhatifActivity.this)
+									.setTitle("TRY YOUR LUCK!")
+									.setView(dialog)
+									.setCancelable(false)
+									.show();
+
+						}
+
+					});
+
+				} catch (InterruptedException e1) {
+
+					e1.printStackTrace();
+				}
+
+			}
+
+		}).start();
+
+	}
+
+	// 裏面2Viewをクリックした時の処理
+	OnClickListener back2Listener = new OnClickListener() {
+
+		@Override
+		public void onClick(View v) {
+
+			if (trumpView[3].getVisibility() == View.INVISIBLE &&
+					trumpView[4].getVisibility() == View.INVISIBLE &&
+					trumpView[5].getVisibility() == View.INVISIBLE) {
+				if (dealAnimFlag && flipAnimFlag && moveAnimFlag) {
+					if (ringerMode && !isPlugged) {
+						soundPool.play(se_trump_select, 0.5F, 0.5F, 0, 0, 1.0F);
+					} else if (isPlugged) {
+						soundPool.play(se_trump_select, 0.1F, 0.1F, 0, 0, 1.0F);
+					}
+
+					((TextView) findViewById(R.id.player2)).setVisibility(View.VISIBLE);
+
+					FlipTrump(2);
+
+					FlipTrump(3, 750);
+					FlipTrump(4, 1000);
+					FlipTrump(5, 1250);
+
+				}
+			}
+
+		}
+
+	};
+
+	// 裏面3Viewをクリックした時の処理
+	OnClickListener back3Listener = new OnClickListener() {
+
+		@Override
+		public void onClick(View v) {
+
+			if (trumpView[2].getVisibility() == View.INVISIBLE &&
+					trumpView[4].getVisibility() == View.INVISIBLE &&
+					trumpView[5].getVisibility() == View.INVISIBLE) {
+
+				if (dealAnimFlag && flipAnimFlag && moveAnimFlag) {
+					if (ringerMode && !isPlugged) {
+						soundPool.play(se_trump_select, 0.5F, 0.5F, 0, 0, 1.0F);
+					} else if (isPlugged) {
+						soundPool.play(se_trump_select, 0.1F, 0.1F, 0, 0, 1.0F);
+					}
+
+					((TextView) findViewById(R.id.player3)).setVisibility(View.VISIBLE);
+
+					FlipTrump(3);
+
+					FlipTrump(2, 750);
+					FlipTrump(4, 1000);
+					FlipTrump(5, 1250);
+
+				}
+			}
+		}
+
+	};
+
+	// 裏面4Viewをクリックした時の処理
+	OnClickListener back4Listener = new OnClickListener() {
+
+		@Override
+		public void onClick(View v) {
+			if (trumpView[2].getVisibility() == View.INVISIBLE &&
+					trumpView[3].getVisibility() == View.INVISIBLE &&
+					trumpView[5].getVisibility() == View.INVISIBLE) {
+				if (dealAnimFlag && flipAnimFlag && moveAnimFlag) {
+					if (ringerMode && !isPlugged) {
+						soundPool.play(se_trump_select, 0.5F, 0.5F, 0, 0, 1.0F);
+					} else if (isPlugged) {
+						soundPool.play(se_trump_select, 0.1F, 0.1F, 0, 0, 1.0F);
+					}
+
+					((TextView) findViewById(R.id.player4)).setVisibility(View.VISIBLE);
+
+					FlipTrump(4);
+
+					FlipTrump(2, 750);
+					FlipTrump(3, 1000);
+					FlipTrump(5, 1250);
+
+				}
+			}
+		}
+	};
+
+	// 裏面5Viewをクリックした時の処理
+	OnClickListener back5Listener = new OnClickListener() {
+
+		@Override
+		public void onClick(View v) {
+			if (trumpView[2].getVisibility() == View.INVISIBLE &&
+					trumpView[3].getVisibility() == View.INVISIBLE &&
+					trumpView[4].getVisibility() == View.INVISIBLE
+			) {
+				if (dealAnimFlag && flipAnimFlag && moveAnimFlag) {
+					if (ringerMode && !isPlugged) {
+						soundPool.play(se_trump_select, 0.5F, 0.5F, 0, 0, 1.0F);
+					} else if (isPlugged) {
+						soundPool.play(se_trump_select, 0.1F, 0.1F, 0, 0, 1.0F);
+					}
+
+					((TextView) findViewById(R.id.player5)).setVisibility(View.VISIBLE);
+
+					FlipTrump(5);
+
+					FlipTrump(2, 750);
+					FlipTrump(3, 1000);
+					FlipTrump(4, 1250);
+
+				}
+			}
+		}
+
+	};
 
 }

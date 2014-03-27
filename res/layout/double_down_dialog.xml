@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/double_down_dialog"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="5dp" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/msgView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="WINNER!"
+            android:textColor="#FF0000"
+            android:textSize="24sp" />
+
+        <TextView
+            android:id="@+id/coinView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingTop="10dp"
+            android:text="YOU GET 0 COINS"
+            android:textSize="18sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="PLAY DOUBLE DOWN！\nOR COLLECT YOUR WINNINGS" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center" >
+
+        <Button
+            android:id="@+id/halfBtn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="1dp"
+            android:layout_weight="1"
+            android:background="@drawable/dialog_button"
+            android:text="HALF\nDOUBLE"
+            android:textColor="#ffffff" />
+
+        <Button
+            android:id="@+id/doubleBtn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="1dp"
+            android:layout_weight="1"
+            android:background="@drawable/dialog_button"
+            android:text="DOUBLE\nDOWN"
+            android:textColor="#ffffff" />
+
+        <Button
+            android:id="@+id/collectBtn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="1dp"
+            android:layout_weight="1"
+            android:background="@drawable/dialog_button"
+            android:text="COLLECT"
+            android:textColor="#ffffff" />
+    </LinearLayout>
+
+</LinearLayout>

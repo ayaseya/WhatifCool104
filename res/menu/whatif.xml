@@ -17,11 +17,11 @@
         android:orderInCategory="100"
         android:showAsAction="never"
         android:title="Ranking"/>
-    <item
-        android:id="@+id/send"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="Send"/>
+<!--     <item -->
+<!--         android:id="@+id/send" -->
+<!--         android:orderInCategory="100" -->
+<!--         android:showAsAction="never" -->
+<!--         android:title="Send"/> -->
     <item
         android:id="@+id/sendtrophy"
         android:orderInCategory="100"
@@ -34,11 +34,11 @@
         android:showAsAction="never"
         android:title="Trophy"/>
  
-        <item
-        android:id="@+id/dialog"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="Dialog"/>
+<!--         <item -->
+<!--         android:id="@+id/dialog" -->
+<!--         android:orderInCategory="100" -->
+<!--         android:showAsAction="never" -->
+<!--         android:title="Dialog"/> -->
     
     
     

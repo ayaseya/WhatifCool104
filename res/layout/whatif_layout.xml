@@ -1817,9 +1817,23 @@
         android:layout_below="@id/roundedImageView1"
         android:gravity="center"
         android:text="@string/selectAble"
-        android:textColor="#000000"
+        android:textColor="#00000000"
         android:textSize="10sp"
         android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/dealer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/roundedImageView1"
+        android:layout_alignRight="@id/roundedImageView1"
+        android:layout_below="@id/roundedImageView1"
+        android:gravity="center"
+        android:text="@string/dealer"
+        android:textColor="#FFFFFF"
+        android:textSize="10sp"
+        android:textStyle="bold"
+        android:visibility="invisible" />
 
     <TextView
         android:id="@+id/selectAble2"
@@ -1830,9 +1844,23 @@
         android:layout_below="@id/roundedImageView2"
         android:gravity="center"
         android:text="@string/selectAble"
-        android:textColor="#000000"
+        android:textColor="#00000000"
         android:textSize="10sp"
         android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/player2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/roundedImageView1"
+        android:layout_alignRight="@id/roundedImageView1"
+        android:layout_below="@id/roundedImageView1"
+        android:gravity="center"
+        android:text="@string/player"
+        android:textColor="#FFFFFF"
+        android:textSize="10sp"
+        android:textStyle="bold"
+        android:visibility="invisible" />
 
     <TextView
         android:id="@+id/selectAble3"
@@ -1843,9 +1871,23 @@
         android:layout_below="@id/roundedImageView3"
         android:gravity="center"
         android:text="@string/selectAble"
-        android:textColor="#000000"
+        android:textColor="#00000000"
         android:textSize="10sp"
         android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/player3"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/roundedImageView3"
+        android:layout_alignRight="@id/roundedImageView3"
+        android:layout_below="@id/roundedImageView3"
+        android:gravity="center"
+        android:text="@string/player"
+        android:textColor="#FFFFFF"
+        android:textSize="10sp"
+        android:textStyle="bold"
+        android:visibility="invisible" />
 
     <TextView
         android:id="@+id/selectAble4"
@@ -1856,9 +1898,23 @@
         android:layout_below="@id/roundedImageView4"
         android:gravity="center"
         android:text="@string/selectAble"
-        android:textColor="#000000"
+        android:textColor="#00000000"
         android:textSize="10sp"
         android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/player4"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/roundedImageView4"
+        android:layout_alignRight="@id/roundedImageView4"
+        android:layout_below="@id/roundedImageView4"
+        android:gravity="center"
+        android:text="@string/player"
+        android:textColor="#FFFFFF"
+        android:textSize="10sp"
+        android:textStyle="bold"
+        android:visibility="invisible" />
 
     <TextView
         android:id="@+id/selectAble5"
@@ -1869,9 +1925,23 @@
         android:layout_below="@id/roundedImageView5"
         android:gravity="center"
         android:text="@string/selectAble"
-        android:textColor="#000000"
+        android:textColor="#00000000"
         android:textSize="10sp"
         android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/player5"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/roundedImageView5"
+        android:layout_alignRight="@id/roundedImageView5"
+        android:layout_below="@id/roundedImageView5"
+        android:gravity="center"
+        android:text="@string/player"
+        android:textColor="#FFFFFF"
+        android:textSize="10sp"
+        android:textStyle="bold"
+        android:visibility="invisible" />
 
     <TextSwitcher
         android:id="@+id/counterView"
@@ -2155,7 +2225,6 @@
                 android:layout_weight="1"
                 android:background="@drawable/nomal_button"
                 android:text="@string/repeatbet" />
-
         </LinearLayout>
 
         <LinearLayout
@@ -2163,7 +2232,7 @@
             android:layout_height="wrap_content" >
 
             <Button
-                android:id="@+id/collectBtn"
+                android:id="@+id/cancelBtn"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_margin="2dp"
@@ -2182,7 +2251,6 @@
                 android:background="@drawable/nomal_button"
                 android:padding="5dp"
                 android:text="@string/deal" />
-
         </LinearLayout>
     </LinearLayout>
 

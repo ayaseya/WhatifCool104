@@ -46,8 +46,11 @@ public class Coin {
 				wager = maxbet;
 
 				//				Log.v("Test", "3:credit="+credit+" wager="+wager);
+			} else if (beforeWager == credit) {
+				credit = 0;
+				wager += beforeWager;
 			}
-			
+
 		}
 
 	}
