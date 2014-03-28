@@ -135,4 +135,7 @@
 	<string name="dealer">DEALER</string>
 	<string name="player">PLAYER</string>
 	
+	<string name="transmitting">通信中</string>
+	<string name="wait">Please wait...</string>
+	
 </resources>

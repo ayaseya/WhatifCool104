@@ -227,12 +227,17 @@ public class WhatifActivity extends BaseGameActivity
 
 	private long start;
 	private long stop;
-	private Dialog alert;
+	private Dialog alert_doubleDown1;
+	private Dialog alert_doubleDown2;
+	private Dialog alert_clear;
+
 	private long clearTime;
 
 	private ProgressDialog loading;
 
 	private ResultCallback<SubmitScoreResult> callback;
+
+	private int count_DoubleDown = 0;
 
 	/* ********** ********** ********** ********** */
 
@@ -248,7 +253,7 @@ public class WhatifActivity extends BaseGameActivity
 		File file = this.getFileStreamPath("SaveData.dat");
 		boolean isExists = file.exists();
 		if (isExists) {
-			Log.v(TAG, "> SaveData.datが存在しました");
+			//			Log.v(TAG, "> SaveData.datが存在しました");
 			try {
 				FileInputStream fis = openFileInput("SaveData.dat");
 				ObjectInputStream ois = new ObjectInputStream(fis);
@@ -263,10 +268,10 @@ public class WhatifActivity extends BaseGameActivity
 				}
 
 			} catch (Exception e) {
-				Log.d(TAG, "Error");
+				//				Log.v(TAG, "Error");
 			}
 		} else {
-			Log.v("Test", "SaveData.datが存在しませんでした");
+			//			Log.v(TAG, "SaveData.datが存在しませんでした");
 		}
 		setContentView(R.layout.whatif_layout);
 
@@ -278,7 +283,18 @@ public class WhatifActivity extends BaseGameActivity
 		// トランプ(52枚)を管理するDeckクラスのインスタンスの取得
 		deck = new Deck(this.getApplicationContext());
 		// トランプ(52枚)の生成とシャッフル
-		deck.shuffle(this.getApplicationContext());
+		//		deck.shuffle(this.getApplicationContext());
+		deck.standard(this.getApplicationContext());
+
+		//		StringBuffer sequence = new StringBuffer(">Deck="); 
+		//		for(int i=0;i<deck.trump.size();i++){
+		//			
+		//			sequence.append(deck.trump.get(i).getSuit());
+		//			sequence.append(String.valueOf(deck.trump.get(i).getNumber()));
+		//			sequence.append(",");
+		//		}
+		//		Log.v(TAG, sequence.toString());
+
 		// 場札に置いた順番を記録するインスタンスを取得する
 		record = new Deck(this.getApplicationContext());
 
@@ -380,6 +396,7 @@ public class WhatifActivity extends BaseGameActivity
 		findViewById(R.id.msgLayout).setVisibility(View.INVISIBLE);
 
 		counterMsg = (TextView) findViewById(R.id.counterMsg);
+		msg = (TextView) findViewById(R.id.msgView1);
 
 		ringerModeStateChangeReceiver = new BroadcastReceiver() {
 
@@ -425,8 +442,8 @@ public class WhatifActivity extends BaseGameActivity
 
 		// ダイアログの設定
 		loading = new ProgressDialog(this);
-		loading.setTitle("通信中");
-		loading.setMessage("Please wait...");
+		loading.setTitle(res.getString(R.string.transmitting));
+		loading.setMessage(res.getString(R.string.wait));
 		loading.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 		loading.setCancelable(false);
 
@@ -932,7 +949,7 @@ public class WhatifActivity extends BaseGameActivity
 											trumpView[index].setVisibility(View.VISIBLE);
 											flipAnimFlag = true;
 
-											checkVisibility();
+											secondDoubleDownDialog();
 										}
 									});
 								}
@@ -942,8 +959,8 @@ public class WhatifActivity extends BaseGameActivity
 
 					});
 
-				} catch (InterruptedException e1) {
-					e1.printStackTrace();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
 				}
 
 			}
@@ -1007,6 +1024,9 @@ public class WhatifActivity extends BaseGameActivity
 	}
 
 	private void setScrollView() {
+
+		pokerPrevPosition = 0;
+
 		scrollHeight = findViewById(R.id.cChain1).getHeight();
 
 		bonusScroll1 = (ScrollView) findViewById(R.id.bonusScroll1);
@@ -1210,7 +1230,7 @@ public class WhatifActivity extends BaseGameActivity
 					view.setTextColor(0x00FFFF00);
 					selectAble();
 					GameOver();
-					GameClear();
+
 				}
 
 				scrollUp();
@@ -1386,164 +1406,164 @@ public class WhatifActivity extends BaseGameActivity
 	// ポーカーの役が成立していた時の処理
 	private void checkPoker() {
 
-		int movement = 0;
+		/*		int movement = 0;
 
-		if (counter < 48) {// 手札が5枚存在する間は役の判定を行う
+				if (counter < 48) {// 手札が5枚存在する間は役の判定を行う
 
-			if (checkRF()) {
+					if (checkRF()) {
 
-				pokerPosition = 1;
+						pokerPosition = 1;
 
-				if (pokerPosition < pokerPrevPosition) {// 現在位置が移動先よりも上にある場合
-					movement = pokerPosition - pokerPrevPosition;
-					if (movement != 0) {// 移動量が0でなければスクロール
-						bonusScroll2.smoothScrollBy(0, scrollHeight * movement);
-						paysScroll2.smoothScrollBy(0, scrollHeight * movement);
-						hitsScroll1.smoothScrollBy(0, scrollHeight * movement);
+						if (pokerPosition < pokerPrevPosition) {// 現在位置が移動先よりも上にある場合
+							movement = pokerPosition - pokerPrevPosition;
+							if (movement != 0) {// 移動量が0でなければスクロール
+								bonusScroll2.smoothScrollBy(0, scrollHeight * movement);
+								paysScroll2.smoothScrollBy(0, scrollHeight * movement);
+								hitsScroll1.smoothScrollBy(0, scrollHeight * movement);
+							}
+						} else {// 現在位置が移動先よりも下にある場合
+							movement = pokerPrevPosition - pokerPosition;
+							if (movement != 0) {// 移動量が0でなければスクロール
+								bonusScroll2.smoothScrollBy(0, -scrollHeight * movement);
+								paysScroll2.smoothScrollBy(0, -scrollHeight * movement);
+								hitsScroll1.smoothScrollBy(0, -scrollHeight * movement);
+							}
+						}
+
+						RFcount++;
+						((TextView) findViewById(R.id.hitsFlag1)).setText(String.valueOf(RFcount));
+						((TextView) findViewById(R.id.handBonus1)).setText(String.valueOf(ratePoker[1] * coin.getWager()));
+
+						if (ringerMode && !isPlugged) {
+							soundPool.play(se_coin, 0.5F, 0.5F, 0, 0, 1.0F);
+						} else if (isPlugged) {
+							soundPool.play(se_coin, 0.1F, 0.1F, 0, 0, 1.0F);
+						}
+						pokerPrevPosition = pokerPosition;
+						return;
+
+					} else if (checkSF()) {
+						pokerPosition = 2;
+
+						if (pokerPosition < pokerPrevPosition) {// 現在位置が移動先よりも上にある場合
+							movement = pokerPosition - pokerPrevPosition;
+							if (movement != 0) {// 移動量が0でなければスクロール
+								bonusScroll2.smoothScrollBy(0, scrollHeight * movement);
+								paysScroll2.smoothScrollBy(0, scrollHeight * movement);
+								hitsScroll1.smoothScrollBy(0, scrollHeight * movement);
+							}
+						} else {// 現在位置が移動先よりも下にある場合
+							movement = pokerPrevPosition - pokerPosition;
+							if (movement != 0) {// 移動量が0でなければスクロール
+								bonusScroll2.smoothScrollBy(0, -scrollHeight * movement);
+								paysScroll2.smoothScrollBy(0, -scrollHeight * movement);
+								hitsScroll1.smoothScrollBy(0, -scrollHeight * movement);
+							}
+						}
+
+						SFcount++;
+						((TextView) findViewById(R.id.hitsFlag2)).setText(String.valueOf(SFcount));
+						((TextView) findViewById(R.id.handBonus2)).setText(String.valueOf(ratePoker[2] * coin.getWager()));
+
+						if (ringerMode && !isPlugged) {
+							soundPool.play(se_coin, 0.5F, 0.5F, 0, 0, 1.0F);
+						} else if (isPlugged) {
+							soundPool.play(se_coin, 0.1F, 0.1F, 0, 0, 1.0F);
+						}
+						pokerPrevPosition = pokerPosition;
+						return;
+					} else if (checkFK()) {
+
+						pokerPosition = 3;
+
+						if (pokerPosition < pokerPrevPosition) {// 現在位置が移動先よりも上にある場合
+							movement = pokerPosition - pokerPrevPosition;
+							if (movement != 0) {// 移動量が0でなければスクロール
+								bonusScroll2.smoothScrollBy(0, scrollHeight * movement);
+								paysScroll2.smoothScrollBy(0, scrollHeight * movement);
+								hitsScroll1.smoothScrollBy(0, scrollHeight * movement);
+							}
+						} else {// 現在位置が移動先よりも下にある場合
+							movement = pokerPrevPosition - pokerPosition;
+							if (movement != 0) {// 移動量が0でなければスクロール
+								bonusScroll2.smoothScrollBy(0, -scrollHeight * movement);
+								paysScroll2.smoothScrollBy(0, -scrollHeight * movement);
+								hitsScroll1.smoothScrollBy(0, -scrollHeight * movement);
+							}
+						}
+						FKcount++;
+						((TextView) findViewById(R.id.hitsFlag3)).setText(String.valueOf(FKcount));
+						((TextView) findViewById(R.id.handBonus3)).setText(String.valueOf(ratePoker[3] * coin.getWager()));
+
+						if (ringerMode && !isPlugged) {
+							soundPool.play(se_coin, 0.5F, 0.5F, 0, 0, 1.0F);
+						} else if (isPlugged) {
+							soundPool.play(se_coin, 0.1F, 0.1F, 0, 0, 1.0F);
+						}
+						pokerPrevPosition = pokerPosition;
+						return;
+					} else if (checkFH()) {
+
+						pokerPosition = 4;
+
+						if (pokerPosition < pokerPrevPosition) {// 現在位置が移動先よりも上にある場合
+							movement = pokerPosition - pokerPrevPosition;
+							if (movement != 0) {// 移動量が0でなければスクロール
+								bonusScroll2.smoothScrollBy(0, scrollHeight * movement);
+								paysScroll2.smoothScrollBy(0, scrollHeight * movement);
+								hitsScroll1.smoothScrollBy(0, scrollHeight * movement);
+							}
+						} else {// 現在位置が移動先よりも下にある場合
+							movement = pokerPrevPosition - pokerPosition;
+							if (movement != 0) {// 移動量が0でなければスクロール
+								bonusScroll2.smoothScrollBy(0, -scrollHeight * movement);
+								paysScroll2.smoothScrollBy(0, -scrollHeight * movement);
+								hitsScroll1.smoothScrollBy(0, -scrollHeight * movement);
+							}
+						}
+						FHcount++;
+						((TextView) findViewById(R.id.hitsFlag4)).setText(String.valueOf(FHcount));
+						((TextView) findViewById(R.id.handBonus4)).setText(String.valueOf(ratePoker[4] * coin.getWager()));
+
+						if (ringerMode && !isPlugged) {
+							soundPool.play(se_coin, 0.5F, 0.5F, 0, 0, 1.0F);
+						} else if (isPlugged) {
+							soundPool.play(se_coin, 0.1F, 0.1F, 0, 0, 1.0F);
+						}
+						pokerPrevPosition = pokerPosition;
+						return;
+					} else if (checkFL()) {
+
+						pokerPosition = 5;
+
+						if (pokerPosition < pokerPrevPosition) {// 現在位置が移動先よりも上にある場合
+							movement = pokerPosition - pokerPrevPosition;
+							if (movement != 0) {// 移動量が0でなければスクロール
+								bonusScroll2.smoothScrollBy(0, scrollHeight * movement);
+								paysScroll2.smoothScrollBy(0, scrollHeight * movement);
+								hitsScroll1.smoothScrollBy(0, scrollHeight * movement);
+							}
+						} else {// 現在位置が移動先よりも下にある場合
+							movement = pokerPrevPosition - pokerPosition;
+							if (movement != 0) {// 移動量が0でなければスクロール
+								bonusScroll2.smoothScrollBy(0, -scrollHeight * movement);
+								paysScroll2.smoothScrollBy(0, -scrollHeight * movement);
+								hitsScroll1.smoothScrollBy(0, -scrollHeight * movement);
+							}
+						}
+						FLcount++;
+						((TextView) findViewById(R.id.hitsFlag5)).setText(String.valueOf(FLcount));
+						((TextView) findViewById(R.id.handBonus5)).setText(String.valueOf(ratePoker[5] * coin.getWager()));
+
+						if (ringerMode && !isPlugged) {
+							soundPool.play(se_coin, 0.5F, 0.5F, 0, 0, 1.0F);
+						} else if (isPlugged) {
+							soundPool.play(se_coin, 0.1F, 0.1F, 0, 0, 1.0F);
+						}
+						pokerPrevPosition = pokerPosition;
+						return;
 					}
-				} else {// 現在位置が移動先よりも下にある場合
-					movement = pokerPrevPosition - pokerPosition;
-					if (movement != 0) {// 移動量が0でなければスクロール
-						bonusScroll2.smoothScrollBy(0, -scrollHeight * movement);
-						paysScroll2.smoothScrollBy(0, -scrollHeight * movement);
-						hitsScroll1.smoothScrollBy(0, -scrollHeight * movement);
-					}
-				}
-
-				RFcount++;
-				((TextView) findViewById(R.id.hitsFlag1)).setText(String.valueOf(RFcount));
-				((TextView) findViewById(R.id.handBonus1)).setText(String.valueOf(ratePoker[1] * coin.getWager()));
-
-				if (ringerMode && !isPlugged) {
-					soundPool.play(se_coin, 0.5F, 0.5F, 0, 0, 1.0F);
-				} else if (isPlugged) {
-					soundPool.play(se_coin, 0.1F, 0.1F, 0, 0, 1.0F);
-				}
-				pokerPrevPosition = pokerPosition;
-				return;
-
-			} else if (checkSF()) {
-				pokerPosition = 2;
-
-				if (pokerPosition < pokerPrevPosition) {// 現在位置が移動先よりも上にある場合
-					movement = pokerPosition - pokerPrevPosition;
-					if (movement != 0) {// 移動量が0でなければスクロール
-						bonusScroll2.smoothScrollBy(0, scrollHeight * movement);
-						paysScroll2.smoothScrollBy(0, scrollHeight * movement);
-						hitsScroll1.smoothScrollBy(0, scrollHeight * movement);
-					}
-				} else {// 現在位置が移動先よりも下にある場合
-					movement = pokerPrevPosition - pokerPosition;
-					if (movement != 0) {// 移動量が0でなければスクロール
-						bonusScroll2.smoothScrollBy(0, -scrollHeight * movement);
-						paysScroll2.smoothScrollBy(0, -scrollHeight * movement);
-						hitsScroll1.smoothScrollBy(0, -scrollHeight * movement);
-					}
-				}
-
-				SFcount++;
-				((TextView) findViewById(R.id.hitsFlag2)).setText(String.valueOf(SFcount));
-				((TextView) findViewById(R.id.handBonus2)).setText(String.valueOf(ratePoker[2] * coin.getWager()));
-
-				if (ringerMode && !isPlugged) {
-					soundPool.play(se_coin, 0.5F, 0.5F, 0, 0, 1.0F);
-				} else if (isPlugged) {
-					soundPool.play(se_coin, 0.1F, 0.1F, 0, 0, 1.0F);
-				}
-				pokerPrevPosition = pokerPosition;
-				return;
-			} else if (checkFK()) {
-
-				pokerPosition = 3;
-
-				if (pokerPosition < pokerPrevPosition) {// 現在位置が移動先よりも上にある場合
-					movement = pokerPosition - pokerPrevPosition;
-					if (movement != 0) {// 移動量が0でなければスクロール
-						bonusScroll2.smoothScrollBy(0, scrollHeight * movement);
-						paysScroll2.smoothScrollBy(0, scrollHeight * movement);
-						hitsScroll1.smoothScrollBy(0, scrollHeight * movement);
-					}
-				} else {// 現在位置が移動先よりも下にある場合
-					movement = pokerPrevPosition - pokerPosition;
-					if (movement != 0) {// 移動量が0でなければスクロール
-						bonusScroll2.smoothScrollBy(0, -scrollHeight * movement);
-						paysScroll2.smoothScrollBy(0, -scrollHeight * movement);
-						hitsScroll1.smoothScrollBy(0, -scrollHeight * movement);
-					}
-				}
-				FKcount++;
-				((TextView) findViewById(R.id.hitsFlag3)).setText(String.valueOf(FKcount));
-				((TextView) findViewById(R.id.handBonus3)).setText(String.valueOf(ratePoker[3] * coin.getWager()));
-
-				if (ringerMode && !isPlugged) {
-					soundPool.play(se_coin, 0.5F, 0.5F, 0, 0, 1.0F);
-				} else if (isPlugged) {
-					soundPool.play(se_coin, 0.1F, 0.1F, 0, 0, 1.0F);
-				}
-				pokerPrevPosition = pokerPosition;
-				return;
-			} else if (checkFH()) {
-
-				pokerPosition = 4;
-
-				if (pokerPosition < pokerPrevPosition) {// 現在位置が移動先よりも上にある場合
-					movement = pokerPosition - pokerPrevPosition;
-					if (movement != 0) {// 移動量が0でなければスクロール
-						bonusScroll2.smoothScrollBy(0, scrollHeight * movement);
-						paysScroll2.smoothScrollBy(0, scrollHeight * movement);
-						hitsScroll1.smoothScrollBy(0, scrollHeight * movement);
-					}
-				} else {// 現在位置が移動先よりも下にある場合
-					movement = pokerPrevPosition - pokerPosition;
-					if (movement != 0) {// 移動量が0でなければスクロール
-						bonusScroll2.smoothScrollBy(0, -scrollHeight * movement);
-						paysScroll2.smoothScrollBy(0, -scrollHeight * movement);
-						hitsScroll1.smoothScrollBy(0, -scrollHeight * movement);
-					}
-				}
-				FHcount++;
-				((TextView) findViewById(R.id.hitsFlag4)).setText(String.valueOf(FHcount));
-				((TextView) findViewById(R.id.handBonus4)).setText(String.valueOf(ratePoker[4] * coin.getWager()));
-
-				if (ringerMode && !isPlugged) {
-					soundPool.play(se_coin, 0.5F, 0.5F, 0, 0, 1.0F);
-				} else if (isPlugged) {
-					soundPool.play(se_coin, 0.1F, 0.1F, 0, 0, 1.0F);
-				}
-				pokerPrevPosition = pokerPosition;
-				return;
-			} else if (checkFL()) {
-
-				pokerPosition = 5;
-
-				if (pokerPosition < pokerPrevPosition) {// 現在位置が移動先よりも上にある場合
-					movement = pokerPosition - pokerPrevPosition;
-					if (movement != 0) {// 移動量が0でなければスクロール
-						bonusScroll2.smoothScrollBy(0, scrollHeight * movement);
-						paysScroll2.smoothScrollBy(0, scrollHeight * movement);
-						hitsScroll1.smoothScrollBy(0, scrollHeight * movement);
-					}
-				} else {// 現在位置が移動先よりも下にある場合
-					movement = pokerPrevPosition - pokerPosition;
-					if (movement != 0) {// 移動量が0でなければスクロール
-						bonusScroll2.smoothScrollBy(0, -scrollHeight * movement);
-						paysScroll2.smoothScrollBy(0, -scrollHeight * movement);
-						hitsScroll1.smoothScrollBy(0, -scrollHeight * movement);
-					}
-				}
-				FLcount++;
-				((TextView) findViewById(R.id.hitsFlag5)).setText(String.valueOf(FLcount));
-				((TextView) findViewById(R.id.handBonus5)).setText(String.valueOf(ratePoker[5] * coin.getWager()));
-
-				if (ringerMode && !isPlugged) {
-					soundPool.play(se_coin, 0.5F, 0.5F, 0, 0, 1.0F);
-				} else if (isPlugged) {
-					soundPool.play(se_coin, 0.1F, 0.1F, 0, 0, 1.0F);
-				}
-				pokerPrevPosition = pokerPosition;
-				return;
-			}
-		}
+				}*/
 	}
 
 	// boldNum関数…場札に置いたトランプの数字をガイド上で太字・シアンにする処理
@@ -1723,9 +1743,8 @@ public class WhatifActivity extends BaseGameActivity
 
 							});
 
-						} catch (InterruptedException e1) {
-							// TODO 自動生成された catch ブロック
-							e1.printStackTrace();
+						} catch (InterruptedException e) {
+							e.printStackTrace();
 						}
 
 					}
@@ -1798,7 +1817,9 @@ public class WhatifActivity extends BaseGameActivity
 								//								Log.v(TAG, "timer_stop_MIN");
 
 								coin.setCredit(coin.getCredit() + coin.getWager());
+
 								coin.setWager(0);
+								coin.setWin(0);
 								coin.setPaid(0);
 
 								redrawCoin();
@@ -1814,6 +1835,7 @@ public class WhatifActivity extends BaseGameActivity
 
 								coin.setCredit(coin.getCredit() + x);
 								coin.setWager(0);
+								coin.setWin(0);
 								coin.setPaid(0);
 
 								redrawCoin();
@@ -1828,6 +1850,7 @@ public class WhatifActivity extends BaseGameActivity
 
 								coin.setCredit(coin.getCredit() + x);
 								coin.setWager(0);
+								coin.setWin(0);
 								coin.setPaid(0);
 
 								redrawCoin();
@@ -1842,6 +1865,7 @@ public class WhatifActivity extends BaseGameActivity
 
 								coin.setCredit(coin.getCredit() + x);
 								coin.setWager(0);
+								coin.setWin(0);
 								coin.setPaid(0);
 
 								redrawCoin();
@@ -1863,6 +1887,7 @@ public class WhatifActivity extends BaseGameActivity
 
 		} else if (x == 0) {
 			coin.setWager(0);
+			coin.setWin(0);
 			coin.setPaid(0);
 			redrawCoin();
 		}
@@ -1975,7 +2000,7 @@ public class WhatifActivity extends BaseGameActivity
 
 			@Override
 			public void onClick(View view) {
-				alert.dismiss();
+				alert_clear.dismiss();
 			}
 		});
 
@@ -2006,7 +2031,7 @@ public class WhatifActivity extends BaseGameActivity
 			}
 		});
 
-		alert = new AlertDialog.Builder(WhatifActivity.this)
+		alert_clear = new AlertDialog.Builder(WhatifActivity.this)
 				.setTitle("YOUR GAME CLEAR!")
 				.setView(dialog)
 				.setCancelable(false)
@@ -2412,102 +2437,94 @@ public class WhatifActivity extends BaseGameActivity
 
 						@Override
 						public void run() {
+							// リピートボタン用に掛け金を保存しておく
+							coin.setBeforeWager(coin.getWager());
 
-							doubleDown();
+							for (int i = 1; i < 6; i++) {
+								trumpView[i].setVisibility(View.INVISIBLE);
+							}
+
+							if (coin.getWager() < calculateCoin()) {
+
+								if (ringerMode && !isPlugged) {
+									soundPool.play(se_winner, 0.5F, 0.5F, 0, 0, 1.0F);
+								} else if (isPlugged) {
+									soundPool.play(se_winner, 0.1F, 0.1F, 0, 0, 1.0F);
+								}
+
+								if (counter >= 14 && counter < 52) {
+									firstDoubleDownDialog();
+									coin.setWin(calculateCoin());
+									redrawCoin();
+								} else if (counter < 14) {// ポーカーの役だけで払戻金が発生した場合はDoubleDownゲームは発生しない
+
+									msg.setText("WINNER!");
+									msg.setTextColor(Color.RED);
+									// 手札を非表示にして、メッセージ画面手札を表示する
+
+									findViewById(R.id.msgLayout).setVisibility(View.VISIBLE);
+									refundCoin();
+
+								} else if (counter == 52) {
+									stop = System.currentTimeMillis();
+									clearTime = stop - start;
+
+									firstDoubleDownDialog();
+									coin.setWin(calculateCoin());
+									redrawCoin();
+
+								}
+
+							}
+							else if (coin.getWager() == calculateCoin()) {
+
+								if (ringerMode && !isPlugged) {
+									soundPool.play(se_even, 0.5F, 0.5F, 0, 0, 1.0F);
+								} else if (isPlugged) {
+									soundPool.play(se_even, 0.1F, 0.1F, 0, 0, 1.0F);
+								}
+
+								msg.setText("DRAW!");
+								msg.setTextColor(Color.GREEN);
+
+								// 手札を非表示にして、メッセージ画面手札を表示する
+								findViewById(R.id.msgLayout).setVisibility(View.VISIBLE);
+								refundCoin();
+							}
+							else {
+								if (ringerMode && !isPlugged) {
+									soundPool.play(se_loser, 0.5F, 0.5F, 0, 0, 1.0F);
+								} else if (isPlugged) {
+									soundPool.play(se_loser, 0.1F, 0.1F, 0, 0, 1.0F);
+								}
+
+								msg.setText("LOSER!");
+								msg.setTextColor(Color.BLUE);
+
+								present();
+
+								// 手札を非表示にして、メッセージ画面手札を表示する
+								findViewById(R.id.msgLayout).setVisibility(View.VISIBLE);
+								refundCoin();
+							}
+
+							//							stop = System.currentTimeMillis();
+							//
+							//							clearTime = stop - start;
+
+							// callDialog();
 
 						}
 
 					});
 
-				} catch (InterruptedException e1) {
-					// TODO 自動生成された catch ブロック
-					e1.printStackTrace();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
 				}
 
 			}
 
 		}).start();
-
-		//		new Thread(new Runnable() {
-		//
-		//			@Override
-		//			public void run() {
-		//
-		//				try {
-		//					Thread.sleep(msgSleepTime);
-		//
-		//					handler.post(new Runnable() {
-		//
-		//						@Override
-		//						public void run() {
-		//
-		//							coin.setBeforeWager(coin.getWager());
-		//
-		//							for (int i = 1; i < 6; i++) {
-		//								trumpView[i].setVisibility(View.INVISIBLE);
-		//							}
-		//
-		//							msg = (TextView) findViewById(R.id.msgView1);
-		//
-		//							if (coin.getWager() < calculateCoin()) {
-		//
-		//								if (ringerMode && !isPlugged) {
-		//									soundPool.play(se_winner, 0.5F, 0.5F, 0, 0, 1.0F);
-		//								} else if (isPlugged) {
-		//									soundPool.play(se_winner, 0.1F, 0.1F, 0, 0, 1.0F);
-		//								}
-		//
-		//								msg.setText("WINNER!");
-		//								msg.setTextColor(Color.RED);
-		//							}
-		//							else if (coin.getWager() == calculateCoin()) {
-		//
-		//								if (ringerMode && !isPlugged) {
-		//									soundPool.play(se_even, 0.5F, 0.5F, 0, 0, 1.0F);
-		//								} else if (isPlugged) {
-		//									soundPool.play(se_even, 0.1F, 0.1F, 0, 0, 1.0F);
-		//								}
-		//
-		//								msg.setText("DRAW!");
-		//								msg.setTextColor(Color.GREEN);
-		//							}
-		//							else {
-		//								if (ringerMode && !isPlugged) {
-		//									soundPool.play(se_loser, 0.5F, 0.5F, 0, 0, 1.0F);
-		//								} else if (isPlugged) {
-		//									soundPool.play(se_loser, 0.1F, 0.1F, 0, 0, 1.0F);
-		//								}
-		//
-		//								msg.setText("LOSER!");
-		//								msg.setTextColor(Color.BLUE);
-		//
-		//								present();
-		//							}
-		//
-		//							stop = System.currentTimeMillis();
-		//
-		//							clearTime = stop - start;
-		//
-		//							// callDialog();
-		//
-		//							// 手札を非表示にして、メッセージ画面手札を表示する
-		//							findViewById(R.id.msgLayout).setVisibility(View.VISIBLE);
-		//							refundCoin();
-		//
-		//							//Toast.makeText(WhatifActivity.this, "ＧＡＭＥ ＯＶＥＲ", Toast.LENGTH_SHORT).show();
-		//
-		//						}
-		//
-		//					});
-		//
-		//				} catch (InterruptedException e1) {
-		//					// TODO 自動生成された catch ブロック
-		//					e1.printStackTrace();
-		//				}
-		//
-		//			}
-		//
-		//		}).start();
 
 	}// GameOver_**********
 
@@ -2516,37 +2533,6 @@ public class WhatifActivity extends BaseGameActivity
 			Toast.makeText(this.getApplicationContext(), "Present for you!", Toast.LENGTH_SHORT).show();
 			countUp(100);
 		}
-	}
-
-	private void GameClear() {
-
-		if (counter == 52) {
-			if (ringerMode && !isPlugged) {
-				soundPool.play(se_clear, 0.5F, 0.5F, 0, 0, 1.0F);
-			} else if (isPlugged) {
-				soundPool.play(se_clear, 0.1F, 0.1F, 0, 0, 1.0F);
-			}
-			for (int i = 1; i < 6; i++) {
-				trumpView[i].setVisibility(View.INVISIBLE);
-			}
-
-			coin.setBeforeWager(coin.getWager());
-			msg = (TextView) findViewById(R.id.msgView1);
-			msg.setText("CONGRATULATION!");
-			msg.setTextColor(Color.YELLOW);
-
-			stop = System.currentTimeMillis();
-			clearTime = stop - start;
-
-			callDialog();
-
-			// 手札を非表示にして、メッセージ画面手札を表示する
-			findViewById(R.id.msgLayout).setVisibility(View.VISIBLE);
-
-			refundCoin();
-			//Toast.makeText(WhatifActivity.this, "ＧＡＭＥ ＣＬＥＡＲ", Toast.LENGTH_SHORT).show();
-		}
-
 	}
 
 	// ////////////////////////////////////////////////
@@ -2906,7 +2892,18 @@ public class WhatifActivity extends BaseGameActivity
 					// トランプ(52枚)を管理するDeckクラスのインスタンスの取得
 					deck = new Deck(getApplicationContext());
 					// トランプ(52枚)の生成とシャッフル
-					deck.shuffle(getApplicationContext());
+					//					deck.shuffle(getApplicationContext());
+					deck.standard(getApplicationContext());
+
+					//					StringBuffer sequence = new StringBuffer(">Deck="); 
+					//					for(int i=0;i<deck.trump.size();i++){
+					//						
+					//						sequence.append(deck.trump.get(i).getSuit());
+					//						sequence.append(String.valueOf(deck.trump.get(i).getNumber()));
+					//						sequence.append(",");
+					//					}
+					//					Log.v(TAG, sequence.toString());
+
 					// 場札に置いた順番を記録するインスタンスを取得する
 					record = new Deck(getApplicationContext());
 
@@ -2950,6 +2947,8 @@ public class WhatifActivity extends BaseGameActivity
 			if (coinFlag) {
 				skipFlag = true;
 			}
+
+			redrawCoin();
 
 			findViewById(R.id.msgLayout).setVisibility(View.INVISIBLE);
 			findViewById(R.id.btnLayout).setVisibility(View.VISIBLE);
@@ -3207,16 +3206,28 @@ public class WhatifActivity extends BaseGameActivity
 	// ////////////////////////////////////////////////	
 
 	private void doubleDown() {
-		//		if(counter>=14){
-		doubleDownGameFlag = true;
-		if (counter >= 1) {
+
+		if (counter >= 14) {
+			doubleDownGameFlag = true;
 			Deck dealer = new Deck(this);
 			dealer.shuffle(this);
 
-			// 手札を非表示にする
-			for (int i = 0; i < 6; i++) {
-				trumpView[i].setVisibility(View.INVISIBLE);
+			// 掛け金にメインゲーム、もしくはDoubleDownゲームの払戻金を表示する
+			// 全額を掛け金にするので払戻金を0にする
+
+			if (count_DoubleDown == 0) {// 初回のDoubleDownゲーム
+				coin.setWager(coin.getWin());
+				coin.setWin(0);
+				redrawCoin();
+			} else {// 2回目以降のDoubleDownゲーム
+				coin.setWager(coin.getWager() * 2);
+				redrawCoin();
+
 			}
+			// 手札を非表示にする
+			//			for (int i = 0; i < 6; i++) {
+			//				trumpView[i].setVisibility(View.INVISIBLE);
+			//			}
 
 			// カードを裏面の状態で配る
 			for (int i = 1; i < 6; i++) {
@@ -3239,12 +3250,150 @@ public class WhatifActivity extends BaseGameActivity
 
 			FlipTrump(1);
 
+			count_DoubleDown++;
+
 		}
 
 	}
 
+	private void halfDown() {
+
+		if (counter >= 14) {
+			doubleDownGameFlag = true;
+			Deck dealer = new Deck(this);
+			dealer.shuffle(this);
+
+			// 掛け金にメインゲーム、もしくはDoubleDownゲームの払戻金の半額を表示する
+			if (count_DoubleDown == 0) {// 初回のDoubleDownゲーム
+				int wager = coin.getWin() / 2;
+
+				coin.setWager(wager);
+				coin.setWin(coin.getWin() - wager);
+				redrawCoin();
+			} else {// 2回目以降のDoubleDownゲーム
+
+				coin.setWager(coin.getWager());
+				coin.setWin(coin.getWin() + coin.getWager());
+				redrawCoin();
+
+			}
+
+			// 手札を非表示にする
+			//			for (int i = 0; i < 6; i++) {
+			//				trumpView[i].setVisibility(View.INVISIBLE);
+			//			}
+
+			// カードを裏面の状態で配る
+			for (int i = 1; i < 6; i++) {
+				trumpBackView[i].setVisibility(View.VISIBLE);
+			}
+
+			// DEALERの選択した手札の下に"DEALER"TextViewを表示する
+			((TextView) findViewById(R.id.dealer)).setVisibility(View.VISIBLE);
+
+			// 山札から5枚トランプの情報を読み込む
+
+			for (int i = 1; i <= 5; i++) {
+				trumpView[i].setTrump(dealer.trump.get(i - 1).getNumber(),
+						dealer.trump.get(i - 1).getSuit(),
+						dealer.trump.get(i - 1).getSerial(),
+						dealer.trump.get(i - 1).getColor());
+			}
+
+			// DEALERの選択した手札を裏返す
+
+			FlipTrump(1);
+
+			count_DoubleDown++;
+
+		}
+
+	}
+
+	// DoubleDownダイアログを呼び出す処理
+	private void firstDoubleDownDialog() {
+
+		trumpView[0].setVisibility(View.INVISIBLE);
+
+		LayoutInflater inflater = LayoutInflater.from(WhatifActivity.this);
+		View dialog = inflater.inflate(R.layout.double_down_dialog,
+				(ViewGroup) findViewById(R.id.double_down_dialog));
+
+		((TextView) dialog.findViewById(R.id.coinView)).setText(String.valueOf(calculateCoin()));
+
+		((Button) dialog.findViewById(R.id.collectBtn))
+				.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View view) {
+
+						if (counter == 52) {
+							alert_doubleDown1.dismiss();
+
+							coin.setBeforeWager(coin.getWager());
+							msg.setText("CONGRATULATION!");
+							msg.setTextColor(Color.YELLOW);
+
+							// 手札を非表示にして、メッセージ画面手札を表示する
+							findViewById(R.id.msgLayout).setVisibility(View.VISIBLE);
+
+							refundCoin();
+
+							callDialog();
+
+						} else {
+
+							msg.setText("WINNER!");
+							msg.setTextColor(Color.RED);
+							// メッセージ画面手札を表示する
+
+							findViewById(R.id.msgLayout).setVisibility(View.VISIBLE);
+							refundCoin();
+							alert_doubleDown1.dismiss();
+						}
+
+					}
+				});
+
+		((Button) dialog.findViewById(R.id.doubleBtn))
+				.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View view) {
+
+						doubleDown();
+
+						alert_doubleDown1.dismiss();
+
+					}
+				});
+
+		((Button) dialog.findViewById(R.id.halfBtn))
+				.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View view) {
+						// 手札を非表示にする
+						for (int i = 1; i < 6; i++) {
+							trumpView[i].setVisibility(View.INVISIBLE);
+						}
+
+						halfDown();
+
+						alert_doubleDown1.dismiss();
+					}
+				});
+
+		alert_doubleDown1 = new AlertDialog.Builder(WhatifActivity.this)
+				.setTitle("TRY YOUR LUCK!")
+				.setView(dialog)
+				.setCancelable(false)
+				.show();
+
+	}
+
 	// 手札5枚がすべて表示状態になっているかをチェック
-	private void checkVisibility() {
+	private void secondDoubleDownDialog() {
 
 		if (trumpView[2].getVisibility() == View.INVISIBLE) {
 			return;
@@ -3256,6 +3405,9 @@ public class WhatifActivity extends BaseGameActivity
 			return;
 		}
 
+		// DoubleDownゲームを抜けてダイアログに以降するためfalseに変更
+		doubleDownGameFlag = false;
+
 		int dealer = trumpView[1].getNumber();
 		int player = 0;
 
@@ -3264,7 +3416,7 @@ public class WhatifActivity extends BaseGameActivity
 		if (dealer == 1) {
 			dealer = 14;
 		}
-		if (((TextView)findViewById(R.id.player2)).getVisibility() == View.VISIBLE) {
+		if (((TextView) findViewById(R.id.player2)).getVisibility() == View.VISIBLE) {
 
 			player = trumpView[2].getNumber();
 
@@ -3280,7 +3432,7 @@ public class WhatifActivity extends BaseGameActivity
 				result = GAME.DRAW;
 			}
 
-		} else if (((TextView)findViewById(R.id.player3)).getVisibility() == View.VISIBLE) {
+		} else if (((TextView) findViewById(R.id.player3)).getVisibility() == View.VISIBLE) {
 			player = trumpView[3].getNumber();
 
 			if (player == 1) {
@@ -3295,7 +3447,7 @@ public class WhatifActivity extends BaseGameActivity
 				result = GAME.DRAW;
 			}
 
-		} else if (((TextView)findViewById(R.id.player4)).getVisibility() == View.VISIBLE) {
+		} else if (((TextView) findViewById(R.id.player4)).getVisibility() == View.VISIBLE) {
 
 			player = trumpView[4].getNumber();
 
@@ -3311,7 +3463,7 @@ public class WhatifActivity extends BaseGameActivity
 				result = GAME.DRAW;
 			}
 
-		} else if (((TextView)findViewById(R.id.player5)).getVisibility() == View.VISIBLE) {
+		} else if (((TextView) findViewById(R.id.player5)).getVisibility() == View.VISIBLE) {
 
 			player = trumpView[5].getNumber();
 
@@ -3329,13 +3481,133 @@ public class WhatifActivity extends BaseGameActivity
 
 		}
 
-		if (result != GAME.WIN) {
-			
-			Log.v(TAG, "result="+result);
+		if (result == GAME.DRAW) {
+			new Thread(new Runnable() {
+
+				@Override
+				public void run() {
+
+					try {
+						Thread.sleep(500);
+
+						handler.post(new Runnable() {
+
+							@Override
+							public void run() {
+
+								if (ringerMode && !isPlugged) {
+									soundPool.play(se_even, 0.5F, 0.5F, 0, 0, 1.0F);
+								} else if (isPlugged) {
+									soundPool.play(se_even, 0.1F, 0.1F, 0, 0, 1.0F);
+								}
+
+								msg.setText("DRAW!");
+								msg.setTextColor(Color.GREEN);
+
+								// 手札を非表示にする
+								for (int i = 1; i < 6; i++) {
+									trumpView[i].setVisibility(View.INVISIBLE);
+								}
+
+								((TextView) findViewById(R.id.dealer)).setVisibility(View.INVISIBLE);
+								((TextView) findViewById(R.id.player2)).setVisibility(View.INVISIBLE);
+								((TextView) findViewById(R.id.player3)).setVisibility(View.INVISIBLE);
+								((TextView) findViewById(R.id.player4)).setVisibility(View.INVISIBLE);
+								((TextView) findViewById(R.id.player5)).setVisibility(View.INVISIBLE);
+
+								// 手札を非表示にして、メッセージ画面手札を表示する
+								findViewById(R.id.msgLayout).setVisibility(View.VISIBLE);
+
+								if (coin.getWin() != 0) {
+									countUp(coin.getWin());
+								}
+
+								coin.setWager(0);
+								redrawCoin();
+
+								count_DoubleDown = 0;
+
+							}
+
+						});
+
+					} catch (InterruptedException e) {
+
+						e.printStackTrace();
+					}
+
+				}
+
+			}).start();
+
+			return;
+
+		}
+		else if (result == GAME.LOSE) {
+
+			new Thread(new Runnable() {
+
+				@Override
+				public void run() {
+
+					try {
+						Thread.sleep(500);
+
+						handler.post(new Runnable() {
+
+							@Override
+							public void run() {
+
+								if (ringerMode && !isPlugged) {
+									soundPool.play(se_loser, 0.5F, 0.5F, 0, 0, 1.0F);
+								} else if (isPlugged) {
+									soundPool.play(se_loser, 0.1F, 0.1F, 0, 0, 1.0F);
+								}
+
+								msg.setText("LOSER!");
+								msg.setTextColor(Color.BLUE);
+
+								// 手札を非表示にする
+								for (int i = 1; i < 6; i++) {
+									trumpView[i].setVisibility(View.INVISIBLE);
+								}
+
+								((TextView) findViewById(R.id.dealer)).setVisibility(View.INVISIBLE);
+								((TextView) findViewById(R.id.player2)).setVisibility(View.INVISIBLE);
+								((TextView) findViewById(R.id.player3)).setVisibility(View.INVISIBLE);
+								((TextView) findViewById(R.id.player4)).setVisibility(View.INVISIBLE);
+								((TextView) findViewById(R.id.player5)).setVisibility(View.INVISIBLE);
+
+								present();
+
+								// 手札を非表示にして、メッセージ画面手札を表示する
+								findViewById(R.id.msgLayout).setVisibility(View.VISIBLE);
+
+								if (coin.getWin() != 0) {
+									countUp(coin.getWin());
+								}
+								coin.setWager(0);
+								redrawCoin();
+
+								count_DoubleDown = 0;
+
+							}
+
+						});
+
+					} catch (InterruptedException e) {
+
+						e.printStackTrace();
+					}
+
+				}
+
+			}).start();
+
 			return;
 		}
-		
-		Log.v("Test", "CheckPoint");
+
+		// result==GAME.WINの処理
 
 		new Thread(new Runnable() {
 
@@ -3354,8 +3626,7 @@ public class WhatifActivity extends BaseGameActivity
 							View dialog = inflater.inflate(R.layout.double_down_dialog,
 									(ViewGroup) findViewById(R.id.double_down_dialog));
 
-							((TextView) dialog.findViewById(R.id.coinView)).setText(
-									"YOU GET " + calculateCoin() + " COINS");
+							((TextView) dialog.findViewById(R.id.coinView)).setText(String.valueOf(coin.getWager() * 2));
 
 							((Button) dialog.findViewById(R.id.collectBtn))
 									.setOnClickListener(new OnClickListener() {
@@ -3374,7 +3645,16 @@ public class WhatifActivity extends BaseGameActivity
 											((TextView) findViewById(R.id.player4)).setVisibility(View.INVISIBLE);
 											((TextView) findViewById(R.id.player5)).setVisibility(View.INVISIBLE);
 
-											alert.dismiss();
+											msg.setText("WINNER!");
+											msg.setTextColor(Color.RED);
+											// メッセージ画面手札を表示する
+
+											findViewById(R.id.msgLayout).setVisibility(View.VISIBLE);
+											countUp(coin.getWin());
+
+											count_DoubleDown = 0;
+
+											alert_doubleDown2.dismiss();
 										}
 									});
 
@@ -3394,7 +3674,9 @@ public class WhatifActivity extends BaseGameActivity
 											((TextView) findViewById(R.id.player4)).setVisibility(View.INVISIBLE);
 											((TextView) findViewById(R.id.player5)).setVisibility(View.INVISIBLE);
 
-											alert.dismiss();
+											doubleDown();
+
+											alert_doubleDown2.dismiss();
 										}
 									});
 
@@ -3414,12 +3696,14 @@ public class WhatifActivity extends BaseGameActivity
 											((TextView) findViewById(R.id.player4)).setVisibility(View.INVISIBLE);
 											((TextView) findViewById(R.id.player5)).setVisibility(View.INVISIBLE);
 
-											alert.dismiss();
+											halfDown();
+
+											alert_doubleDown2.dismiss();
 										}
 									});
 
-							alert = new AlertDialog.Builder(WhatifActivity.this)
-									.setTitle("TRY YOUR LUCK!")
+							alert_doubleDown2 = new AlertDialog.Builder(WhatifActivity.this)
+									.setTitle("TRY YOUR LUCK! +" + String.valueOf(count_DoubleDown))
 									.setView(dialog)
 									.setCancelable(false)
 									.show();
@@ -3428,9 +3712,9 @@ public class WhatifActivity extends BaseGameActivity
 
 					});
 
-				} catch (InterruptedException e1) {
+				} catch (InterruptedException e) {
 
-					e1.printStackTrace();
+					e.printStackTrace();
 				}
 
 			}

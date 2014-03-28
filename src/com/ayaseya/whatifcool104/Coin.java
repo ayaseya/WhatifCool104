@@ -9,6 +9,7 @@ public class Coin {
 
 	private int beforeCredit = 0;// プレイヤーのコイン枚数
 	private int beforeWager = 0;// 掛け金
+	private int beforeWin = 0;//払戻金
 
 	private int minbet = 1;// 最小BET数
 	private int maxbet = 10;// 最大BET数
@@ -152,6 +153,14 @@ public class Coin {
 
 	public void setBeforeWager(int beforeWager) {
 		this.beforeWager = beforeWager;
+	}
+	
+	public int getBeforeWin() {
+		return beforeWin;
+	}
+
+	public void setBeforeWin(int beforeWin) {
+		this.beforeWin = beforeWin;
 	}
 
 }
