@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="WINNER!"
+            android:text="@string/winner"
             android:textColor="#FF0000"
             android:textSize="24sp" />
 
@@ -30,7 +30,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:paddingTop="10dp"
-                android:text="YOU GET "
+                android:text="@string/dialog_msg2"
                 android:textSize="18sp" />
 
             <TextView
@@ -41,6 +41,7 @@
                 android:paddingLeft="5dp"
                 android:paddingRight="5dp"
                 android:text="0"
+                android:textColor="#ffa500"
                 android:textSize="32sp" />
             
             <TextView
@@ -48,7 +49,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:paddingTop="10dp"
-                android:text="COINS"
+                android:text="@string/dialog_msg3"
                 android:textSize="18sp" />
 
         </LinearLayout>
@@ -56,7 +57,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="PLAY DOUBLE DOWN！\nOR COLLECT YOUR WINNINGS" />
+            android:text="@string/dialog_msg4" />
     </LinearLayout>
 
     <LinearLayout
@@ -71,7 +72,7 @@
             android:layout_margin="1dp"
             android:layout_weight="1"
             android:background="@drawable/dialog_button"
-            android:text="HALF\nDOUBLE"
+            android:text="@string/halfdouble"
             android:textColor="#ffffff" />
 
         <Button
@@ -81,7 +82,7 @@
             android:layout_margin="1dp"
             android:layout_weight="1"
             android:background="@drawable/dialog_button"
-            android:text="DOUBLE\nDOWN"
+            android:text="@string/doubledown"
             android:textColor="#ffffff" />
 
         <Button
@@ -91,7 +92,7 @@
             android:layout_margin="1dp"
             android:layout_weight="1"
             android:background="@drawable/dialog_button"
-            android:text="COLLECT"
+            android:text="@string/collect"
             android:textColor="#ffffff" />
     </LinearLayout>
 

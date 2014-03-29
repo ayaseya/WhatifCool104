@@ -162,9 +162,9 @@
         android:id="@+id/player2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@id/roundedImageView1"
-        android:layout_alignRight="@id/roundedImageView1"
-        android:layout_below="@id/roundedImageView1"
+        android:layout_alignLeft="@id/roundedImageView2"
+        android:layout_alignRight="@id/roundedImageView2"
+        android:layout_below="@id/roundedImageView2"
         android:gravity="center"
         android:text="@string/player"
         android:textColor="#FFFFFF"
@@ -2058,7 +2058,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="WINNER!"
+            android:text="@string/winner"
             android:textColor="#FF0000"
             android:textSize="24sp" />
 
@@ -2067,7 +2067,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="To the next game by touching"
+            android:text="@string/touch_msg1"
             android:textColor="#FFFFFF"
             android:textSize="18sp" />
     </LinearLayout>
@@ -2161,7 +2161,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/nomal_button"
                 android:padding="5dp"
-                android:text="@string/collect" />
+                android:text="@string/cancel" />
 
             <Button
                 android:id="@+id/dealBtn"

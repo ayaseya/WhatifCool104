@@ -14,7 +14,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text=">>Please select one of the buttons below" />
+            android:text="@string/dialog_msg1" />
 
     </LinearLayout>
 
@@ -29,7 +29,7 @@
             android:layout_margin="1dp"
             android:layout_weight="1"
             android:background="@drawable/twitter_button"
-            android:text="Twitter"
+            android:text="@string/twitter"
             android:textColor="#ffffff" />
 
         <Button
@@ -39,7 +39,7 @@
             android:layout_margin="1dp"
             android:layout_weight="1"
             android:background="@drawable/dialog_button"
-            android:text="Speedrun"
+            android:text="@string/speedrun"
             android:textColor="#ffffff" />
 
         <Button
@@ -49,7 +49,7 @@
             android:layout_margin="1dp"
             android:layout_weight="1"
             android:background="@drawable/dialog_button"
-            android:text="Close"
+            android:text="@string/close"
             android:textColor="#ffffff" />
 
     </LinearLayout>

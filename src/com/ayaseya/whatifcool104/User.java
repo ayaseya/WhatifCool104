@@ -10,15 +10,20 @@ public class User implements Serializable {
 
 	public int rotate = 0;
 
+	public int doubledown_count = 0;
+
 	// 実績の管理
-	public boolean first_play_achievement = false;// はじめの一歩
-	public boolean first_clear_achievement = false;// 52枚達成
-	public boolean first_gameover_achievement = false;// ゲームオーバー
-	public boolean RS_achievement = false;// ロイヤル・ストレート・フラッシュ
+	public boolean[] achievement_52 = new boolean[52];
+
+	public boolean RF_achievement = false;// ロイヤル・ストレート・フラッシュ
 	public boolean SF_achievement = false;// ストレート・フラッシュ
 	public boolean FK_achievement = false;// フォー・オブ・ア・カインド
 	public boolean FH_achievement = false;// フルハウス
-	public boolean FL_achievement = false;// フラッシュ	
+	public boolean FL_achievement = false;// フラッシュ
+	public boolean complete_10_achievement = false;
+	public boolean doubledown_5_achievement = false;
+	public boolean doubledown_10_achievement = false;
+	public boolean doubledown_15_achievement = false;
 
 	// ゲーム中であった場合以下の情報を保存しておく
 	public boolean game = false;

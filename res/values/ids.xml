@@ -1,7 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <!-- Replace by your app ID -->
     <string name="app_id">596081056561</string>
-    
-    <string name="lb_id">CgkIsbbMyawREAIQAQ</string>
+    <string name="achievement_reached_52">CgkIsbbMyawREAIQAw</string>
+    <string name="achievement_reached_51">CgkIsbbMyawREAIQBA</string>
+    <string name="achievement_reached_50">CgkIsbbMyawREAIQBQ</string>
+    <string name="achievement_reached_49">CgkIsbbMyawREAIQBg</string>
+    <string name="achievement_reached_48">CgkIsbbMyawREAIQBw</string>
+    <string name="achievement_reached_47">CgkIsbbMyawREAIQCA</string>
+    <string name="achievement_reached_46">CgkIsbbMyawREAIQCQ</string>
+    <string name="achievement_reached_45">CgkIsbbMyawREAIQCg</string>
+    <string name="achievement_reached_44">CgkIsbbMyawREAIQCw</string>
+    <string name="achievement_reached_43">CgkIsbbMyawREAIQDA</string>
+    <string name="achievement_reached_42">CgkIsbbMyawREAIQDQ</string>
+    <string name="achievement_reached_41">CgkIsbbMyawREAIQDg</string>
+    <string name="achievement_reached_40">CgkIsbbMyawREAIQDw</string>
+    <string name="achievement_reached_39">CgkIsbbMyawREAIQEA</string>
+    <string name="achievement_reached_38">CgkIsbbMyawREAIQEQ</string>
+    <string name="achievement_reached_37">CgkIsbbMyawREAIQEg</string>
+    <string name="achievement_reached_36">CgkIsbbMyawREAIQEw</string>
+    <string name="achievement_reached_35">CgkIsbbMyawREAIQFA</string>
+    <string name="achievement_reached_34">CgkIsbbMyawREAIQFQ</string>
+    <string name="achievement_reached_33">CgkIsbbMyawREAIQFg</string>
+    <string name="achievement_reached_32">CgkIsbbMyawREAIQFw</string>
+    <string name="achievement_reached_31">CgkIsbbMyawREAIQGA</string>
+    <string name="achievement_reached_30">CgkIsbbMyawREAIQGQ</string>
+    <string name="achievement_reached_29">CgkIsbbMyawREAIQGg</string>
+    <string name="achievement_reached_28">CgkIsbbMyawREAIQGw</string>
+    <string name="achievement_reached_27">CgkIsbbMyawREAIQHA</string>
+    <string name="achievement_reached_26">CgkIsbbMyawREAIQHQ</string>
+    <string name="achievement_reached_25">CgkIsbbMyawREAIQHg</string>
+    <string name="achievement_reached_24">CgkIsbbMyawREAIQHw</string>
+    <string name="achievement_reached_23">CgkIsbbMyawREAIQIA</string>
+    <string name="achievement_reached_22">CgkIsbbMyawREAIQIQ</string>
+    <string name="achievement_reached_21">CgkIsbbMyawREAIQIg</string>
+    <string name="achievement_reached_20">CgkIsbbMyawREAIQIw</string>
+    <string name="achievement_reached_19">CgkIsbbMyawREAIQJA</string>
+    <string name="achievement_reached_18">CgkIsbbMyawREAIQJQ</string>
+    <string name="achievement_reached_17">CgkIsbbMyawREAIQJg</string>
+    <string name="achievement_reached_16">CgkIsbbMyawREAIQJw</string>
+    <string name="achievement_reached_15">CgkIsbbMyawREAIQKA</string>
+    <string name="achievement_reached_14">CgkIsbbMyawREAIQKQ</string>
+    <string name="achievement_reached_13">CgkIsbbMyawREAIQKg</string>
+    <string name="achievement_reached_12">CgkIsbbMyawREAIQKw</string>
+    <string name="achievement_reached_11">CgkIsbbMyawREAIQLA</string>
+    <string name="achievement_reached_10">CgkIsbbMyawREAIQLQ</string>
+    <string name="achievement_reached_9">CgkIsbbMyawREAIQLg</string>
+    <string name="achievement_reached_8">CgkIsbbMyawREAIQLw</string>
+    <string name="achievement_reached_7">CgkIsbbMyawREAIQMA</string>
+    <string name="achievement_reached_6">CgkIsbbMyawREAIQMQ</string>
+    <string name="achievement_reached_5">CgkIsbbMyawREAIQMg</string>
+    <string name="achievement_reached_4">CgkIsbbMyawREAIQMw</string>
+    <string name="achievement_reached_3">CgkIsbbMyawREAIQNA</string>
+    <string name="achievement_reached_2">CgkIsbbMyawREAIQNQ</string>
+    <string name="achievement_reached_1">CgkIsbbMyawREAIQNg</string>
+    <string name="achievement_royal_flush">CgkIsbbMyawREAIQNw</string>
+    <string name="achievement_straight_flush">CgkIsbbMyawREAIQOA</string>
+    <string name="achievement_four_of_a_kind">CgkIsbbMyawREAIQOQ</string>
+    <string name="achievement_full_house">CgkIsbbMyawREAIQOg</string>
+    <string name="achievement_flush">CgkIsbbMyawREAIQOw</string>
+    <string name="achievement_complete_10">CgkIsbbMyawREAIQPA</string>
+    <string name="achievement_doubledown_5">CgkIsbbMyawREAIQPQ</string>
+    <string name="achievement_doubledown_10">CgkIsbbMyawREAIQPg</string>
+    <string name="achievement_doubledown_15">CgkIsbbMyawREAIQPw</string>
+    <string name="leaderboard_what_ifspeedrun">CgkIsbbMyawREAIQQQ</string>
+    <string name="leaderboard_what_ifdoubledown">CgkIsbbMyawREAIQQA</string>
+
 </resources>
