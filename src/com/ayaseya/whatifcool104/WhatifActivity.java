@@ -79,6 +79,7 @@ public class WhatifActivity extends BaseGameActivity
 	private Deck record;
 
 	private int statusbarHeight;
+	
 
 	private boolean flipAnimFlag = true;// アニメーション中はfalseとなり画像をクリックできない
 	private boolean moveAnimFlag = true;// アニメーション中はfalseとなり画像をクリックできない
@@ -3859,6 +3860,8 @@ public class WhatifActivity extends BaseGameActivity
 
 	};
 
+	private AlertDialog alert_finish;
+
 	// achievementの管理
 	public void checkCounterAchievement() {
 
@@ -3887,6 +3890,49 @@ public class WhatifActivity extends BaseGameActivity
 						});
 			}
 		}
+	}
+
+	@Override
+	public void onBackPressed() {
+		//		Log.v(TAG, "onBackPressed()");
+		finishDialog();
+		//	    super.onBackPressed();
+	}
+
+	private void finishDialog() {
+
+		LayoutInflater inflater = LayoutInflater.from(WhatifActivity.this);
+		View dialog = inflater.inflate(R.layout.finish_dialog,
+				(ViewGroup) findViewById(R.id.finish_dialog));
+
+		((Button) dialog.findViewById(R.id.finish_canselBtn))
+				.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View view) {
+
+						alert_finish.dismiss();
+
+					}
+				});
+
+		((Button) dialog.findViewById(R.id.finish_okBtn))
+				.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View view) {
+
+						alert_finish.dismiss();
+						finish();
+
+					}
+				});
+
+		alert_finish = new AlertDialog.Builder(WhatifActivity.this)
+				.setView(dialog)
+				.setCancelable(false)
+				.show();
+
 	}
 
 }
