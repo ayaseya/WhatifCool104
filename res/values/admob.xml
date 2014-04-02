@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="admob_unit_id">ca-app-pub-2725342491107888/2340161655</string>
+    <string name="admob_unit_id">ca-app-pub-2725342491107888/2939787250</string>
+    <string name="admob_unit_id_finish">ca-app-pub-2725342491107888/4416520453</string>
+    
 </resources>

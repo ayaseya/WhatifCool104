@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
     android:id="@+id/finish_dialog"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -27,6 +28,20 @@
                 android:padding="5dp"
                 android:src="@android:drawable/ic_dialog_alert" />
 
+            <!-- <net.nend.android.NendAdView -->
+            <!-- android:id="@+id/nend" -->
+            <!-- android:layout_width="wrap_content" -->
+            <!-- android:layout_height="wrap_content" -->
+            <!-- NendApiKey="499f011dbec5d37cfa388b749aed2bfff440a794" -->
+            <!-- NendSpotId="70357" /> -->
+
+            <net.nend.android.NendAdView
+                android:id="@+id/nend"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                NendApiKey="ebaef1347f6ca1a4cd696a987d0d9fbba4dda8fa"
+                NendSpotId="156841" />
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -36,9 +51,7 @@
                 android:text="@string/dialog_msg5"
                 android:textColor="#ffffff"
                 android:textSize="18sp" />
-
         </LinearLayout>
-        
 
         <LinearLayout
             android:layout_width="match_parent"

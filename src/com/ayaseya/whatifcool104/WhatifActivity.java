@@ -79,7 +79,6 @@ public class WhatifActivity extends BaseGameActivity
 	private Deck record;
 
 	private int statusbarHeight;
-	
 
 	private boolean flipAnimFlag = true;// アニメーション中はfalseとなり画像をクリックできない
 	private boolean moveAnimFlag = true;// アニメーション中はfalseとなり画像をクリックできない
@@ -3613,7 +3612,7 @@ public class WhatifActivity extends BaseGameActivity
 											// メッセージ画面手札を表示する
 
 											findViewById(R.id.msgLayout).setVisibility(View.VISIBLE);
-											countUp(coin.getWin());
+											countUp((coin.getWager() * 2) + coin.getWin());
 
 											if (count_DoubleDown > user.doubledown_count) {
 												user.doubledown_count = count_DoubleDown;
@@ -3902,8 +3901,12 @@ public class WhatifActivity extends BaseGameActivity
 	private void finishDialog() {
 
 		LayoutInflater inflater = LayoutInflater.from(WhatifActivity.this);
-		View dialog = inflater.inflate(R.layout.finish_dialog,
+		final View dialog = inflater.inflate(R.layout.finish_dialog,
 				(ViewGroup) findViewById(R.id.finish_dialog));
+
+		// AdView をリソースとしてルックアップしてリクエストを読み込む
+		//		AdView adView1 = (AdView) dialog.findViewById(R.id.adView_finish);
+		//		AdRequest adRequest1 = new AdRequest.Builder().build();
 
 		((Button) dialog.findViewById(R.id.finish_canselBtn))
 				.setOnClickListener(new OnClickListener() {
@@ -3931,7 +3934,10 @@ public class WhatifActivity extends BaseGameActivity
 		alert_finish = new AlertDialog.Builder(WhatifActivity.this)
 				.setView(dialog)
 				.setCancelable(false)
-				.show();
+				.create();
+
+		//		adView1.loadAd(adRequest1);
+		alert_finish.show();
 
 	}
 
