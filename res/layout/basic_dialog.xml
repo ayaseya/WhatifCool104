@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/clear_dialog"
+    android:id="@+id/basic_dialog"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#000000"
@@ -20,51 +20,48 @@
             android:background="#000000"
             android:orientation="vertical" >
 
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:src="@android:drawable/ic_dialog_alert" />
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingBottom="5dp"
-                android:paddingLeft="5dp"
-                android:paddingTop="5dp"
-                android:text="@string/dialog_msg1"
-                android:textColor="#ffffff" />
-
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
+                android:padding="5dp"
+                android:text="@string/basic_dialog_msg"
+                android:textColor="#ffffff"
+                android:textSize="18sp" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#f8f8ff"
+            android:gravity="center"
             android:padding="5dp" >
 
             <Button
-                android:id="@+id/Twitter"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="1dp"
-                android:layout_weight="1"
-                android:background="@drawable/twitter_button"
-                android:text="@string/twitter"
-                android:textColor="#ffffff" />
-
-            <Button
-                android:id="@+id/SpeedrunBtn"
+                android:id="@+id/basic_okBtn"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="1dp"
                 android:layout_weight="1"
                 android:background="@drawable/dialog_button"
-                android:text="@string/speedrun"
+                android:text="@string/ok"
                 android:textColor="#ffffff" />
 
             <Button
-                android:id="@+id/closeBtn"
+                android:id="@+id/basic_canselBtn"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="1dp"
                 android:layout_weight="1"
                 android:background="@drawable/dialog_button"
-                android:text="@string/close"
+                android:text="@string/cancel"
                 android:textColor="#ffffff" />
         </LinearLayout>
     </LinearLayout>

@@ -68,18 +68,20 @@
     <string name="twitter_msg1">を</string>
     <string name="twitter_msg2">でクリアしました</string>
     <string name="game_clear">GAME CLEAR!</string>
-    <string name="send_ranking_msg">ランキングへクリアタイムを送信しました</string>
+    <string name="send_data_msg">ランキングへデータを送信しました</string>
     <string name="send_error_msg">通信エラーにより送信できませんでした</string>
-    <string name="present">Present for you!</string>
-    <string name="dialog_msg1">>>Please select one of the buttons below</string>
+    <string name="present">PRESENT FOR YOU!</string>
+    <string name="dialog_msg1">>>PLEASE SELECT ONE OF THE BUTTONS BELOW</string>
     <string name="twitter">Twitter</string>
-    <string name="speedrun">Ranking</string>
-    <string name="close">Close</string>
+    <string name="speedrun">RANKING</string>
+    <string name="close">CLOSE</string>
     <string name="dialog_msg2">YOU GET </string>
     <string name="dialog_msg3"> COINS</string>
     <string name="dialog_msg4">PLAY DOUBLE DOWN！\nOR COLLECT YOUR WINNINGS</string>
-    <string name="touch_msg1">To the next game by touching</string>
+    <string name="touch_msg1">TO THE NEXT GAME BY TOUCHING</string>
     <string name="ok">OK</string>
     <string name="dialog_msg5">What if?を終了しますか？</string>
-    
+    <string name="high_score">ハイスコアRanking</string>
+    <string name="high_score_send">ハイスコアを送信する</string>
+    <string name="basic_dialog_msg">データを送信しますか？</string>
 </resources>

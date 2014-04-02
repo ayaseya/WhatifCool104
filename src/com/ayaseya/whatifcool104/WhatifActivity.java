@@ -246,6 +246,8 @@ public class WhatifActivity extends BaseGameActivity
 
 	private NendAdIconLoader nend;
 
+	private AlertDialog basic_alert;
+
 	/* ********** ********** ********** ********** */
 
 	@Override
@@ -2150,6 +2152,42 @@ public class WhatifActivity extends BaseGameActivity
 
 	}
 
+	// ランキングへハイスコアを送信する
+	private void sendHighScore() {
+
+		Games.Leaderboards.submitScoreImmediate(getApiClient(), getString(R.string.leaderboard_what_ifhigh_score), coin.getCredit())
+				.setResultCallback(new ResultCallback<Leaderboards.SubmitScoreResult>() {
+
+					@Override
+					public void onResult(SubmitScoreResult result) {
+						Log.v(TAG, "TonResult" + result.getStatus());
+						Log.v(TAG, "TonResult" + result.getStatus().getStatusCode());
+
+						if (result.getStatus().getStatusCode() == GamesStatusCodes.STATUS_OK) {
+							//						Log.v(TAG, "STATUS_OK");//正常に送信された場合
+							Toast.makeText(WhatifActivity.this, getString(R.string.send_data_msg), Toast.LENGTH_SHORT).show();
+
+						} else if (result.getStatus().getStatusCode() == GamesStatusCodes.STATUS_NETWORK_ERROR_OPERATION_DEFERRED) {
+							//						Log.v(TAG, "STATUS_NETWORK_ERROR_OPERATION_DEFERRED");//端末がオフラインだった場合
+							Toast.makeText(WhatifActivity.this, getString(R.string.send_error_msg), Toast.LENGTH_SHORT).show();
+						} else if (result.getStatus().getStatusCode() == GamesStatusCodes.STATUS_CLIENT_RECONNECT_REQUIRED) {
+							//						Log.v(TAG, "STATUS_CLIENT_RECONNECT_REQUIRED");//スコア送信前に再接続が必要な場合
+							Toast.makeText(WhatifActivity.this, getString(R.string.send_error_msg), Toast.LENGTH_SHORT).show();
+						} else if (result.getStatus().getStatusCode() == GamesStatusCodes.STATUS_LICENSE_CHECK_FAILED) {
+							//						Log.v(TAG, "STATUS_LICENSE_CHECK_FAILED");//ユーザーに許可されなかった場合
+							Toast.makeText(WhatifActivity.this, getString(R.string.send_error_msg), Toast.LENGTH_SHORT).show();
+						} else if (result.getStatus().getStatusCode() == GamesStatusCodes.STATUS_INTERNAL_ERROR) {
+							//						Log.v(TAG, "STATUS_INTERNAL_ERROR");//予期しないエラーが発生した場合
+							Toast.makeText(WhatifActivity.this, getString(R.string.send_error_msg), Toast.LENGTH_SHORT).show();
+						}
+
+						loading.dismiss();
+
+					}
+				});
+
+	}
+
 	// ランキングへクリアタイムを送信する
 	private void sendRanking() {
 
@@ -3163,6 +3201,55 @@ public class WhatifActivity extends BaseGameActivity
 			if (isSignedIn()) {
 				startActivityForResult(Games.Leaderboards.getLeaderboardIntent(getApiClient(), getString(R.string.leaderboard_what_ifdoubledown)),
 						4649);
+			} else {
+				Toast.makeText(this, getString(R.string.please), Toast.LENGTH_SHORT).show();
+			}
+		} else if (id == R.id.high_score) {
+			if (isSignedIn()) {
+				startActivityForResult(Games.Leaderboards.getLeaderboardIntent(getApiClient(), getString(R.string.leaderboard_what_ifhigh_score)),
+						4649);
+			} else {
+				Toast.makeText(this, getString(R.string.please), Toast.LENGTH_SHORT).show();
+			}
+		} else if (id == R.id.high_score_send) {
+			if (isSignedIn()) {
+				
+				
+				
+				LayoutInflater inflater = LayoutInflater.from(WhatifActivity.this);
+				View dialog = inflater.inflate(R.layout.basic_dialog,
+						(ViewGroup) findViewById(R.id.basic_dialog));
+
+				((Button) dialog.findViewById(R.id.basic_canselBtn))
+						.setOnClickListener(new OnClickListener() {
+
+							@Override
+							public void onClick(View view) {
+
+								basic_alert.dismiss();
+
+							}
+						});
+
+				((Button) dialog.findViewById(R.id.basic_okBtn))
+						.setOnClickListener(new OnClickListener() {
+
+							@Override
+							public void onClick(View view) {
+								
+								basic_alert.dismiss();
+								sendHighScore();
+
+							}
+						});
+
+				basic_alert = new AlertDialog.Builder(WhatifActivity.this)
+						.setView(dialog)
+						.setCancelable(false)
+						.show();
+				
+				
+				
 			} else {
 				Toast.makeText(this, getString(R.string.please), Toast.LENGTH_SHORT).show();
 			}

@@ -3,97 +3,111 @@
     android:id="@+id/double_down_dialog"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#000000"
     android:orientation="vertical"
     android:padding="5dp" >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical" >
-
-        <TextView
-            android:id="@+id/msgView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/winner"
-            android:textColor="#FF0000"
-            android:textSize="24sp" />
+        android:background="#ffffff"
+        android:orientation="vertical"
+        android:padding="1dp" >
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center" >
-            
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:paddingTop="10dp"
-                android:text="@string/dialog_msg2"
-                android:textSize="18sp" />
-
-            <TextView
-                android:id="@+id/coinView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp"
-                android:text="0"
-                android:textColor="#ffa500"
-                android:textSize="32sp" />
-            
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:paddingTop="10dp"
-                android:text="@string/dialog_msg3"
-                android:textSize="18sp" />
-
-        </LinearLayout>
-
-        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/dialog_msg4" />
-    </LinearLayout>
+            android:background="#000000"
+            android:orientation="vertical" >
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center" >
+            <TextView
+                android:id="@+id/msgView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/winner"
+                android:textColor="#FF0000"
+                android:textSize="24sp" />
 
-        <Button
-            android:id="@+id/halfBtn"
-            android:layout_width="0dp"
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingTop="10dp"
+                    android:text="@string/dialog_msg2"
+                    android:textColor="#ffffff"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/coinView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:text="0"
+                    android:textColor="#ffa500"
+                    android:textSize="32sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingTop="10dp"
+                    android:text="@string/dialog_msg3"
+                    android:textColor="#ffffff"
+                    android:textSize="18sp" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/dialog_msg4"
+                android:textColor="#ffffff" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="1dp"
-            android:layout_weight="1"
-            android:background="@drawable/dialog_button"
-            android:text="@string/halfdouble"
-            android:textColor="#ffffff" />
+            android:background="#f8f8ff"
+            android:gravity="center"
+            android:padding="5dp" >
 
-        <Button
-            android:id="@+id/doubleBtn"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="1dp"
-            android:layout_weight="1"
-            android:background="@drawable/dialog_button"
-            android:text="@string/doubledown"
-            android:textColor="#ffffff" />
+            <Button
+                android:id="@+id/halfBtn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:layout_weight="1"
+                android:background="@drawable/dialog_button"
+                android:text="@string/halfdouble"
+                android:textColor="#ffffff" />
 
-        <Button
-            android:id="@+id/collectBtn"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="1dp"
-            android:layout_weight="1"
-            android:background="@drawable/dialog_button"
-            android:text="@string/collect"
-            android:textColor="#ffffff" />
+            <Button
+                android:id="@+id/doubleBtn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:layout_weight="1"
+                android:background="@drawable/dialog_button"
+                android:text="@string/doubledown"
+                android:textColor="#ffffff" />
+
+            <Button
+                android:id="@+id/collectBtn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:layout_weight="1"
+                android:background="@drawable/dialog_button"
+                android:text="@string/collect"
+                android:textColor="#ffffff" />
+        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>

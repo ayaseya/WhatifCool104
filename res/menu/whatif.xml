@@ -13,24 +13,33 @@
         android:title="@string/rotate"/>
     <item
         android:id="@+id/ranking"
-       android:icon="@android:drawable/ic_menu_myplaces"
+        android:icon="@android:drawable/ic_menu_myplaces"
         android:orderInCategory="100"
         android:showAsAction="never"
         android:title="@string/ranking"/>
-
     <item
         android:id="@+id/lucky"
-       android:icon="@android:drawable/ic_menu_myplaces"
+        android:icon="@android:drawable/ic_menu_myplaces"
         android:orderInCategory="100"
         android:showAsAction="never"
         android:title="@string/lucky"/>
+    <item
+        android:id="@+id/high_score"
+        android:icon="@android:drawable/ic_menu_myplaces"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/high_score"/>
+    <item
+        android:id="@+id/high_score_send"
+        android:icon="@android:drawable/ic_media_play"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/high_score_send"/>
     <item
         android:id="@+id/trophy"
         android:icon="@android:drawable/star_big_on"
         android:orderInCategory="100"
         android:showAsAction="never"
         android:title="@string/trophy"/>
- 
-
 
 </menu>

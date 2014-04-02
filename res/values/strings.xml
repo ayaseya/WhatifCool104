@@ -70,15 +70,18 @@
     <string name="game_clear">COMPLETE!</string>
     <string name="send_data_msg">Data transmission has been successfully completed</string>
     <string name="send_error_msg">Communication error unable to find a connection to send the request</string>
-    <string name="present">Present for you!</string>
-    <string name="dialog_msg1">>>Please select one of the buttons below</string>
+    <string name="present">PRESENT FOR YOU!</string>
+    <string name="dialog_msg1">>>PLEASE SELECT ONE OF THE BUTTONS BELOW</string>
     <string name="twitter">Twitter</string>
     <string name="speedrun">Speedrun</string>
-    <string name="close">Close</string>
+    <string name="close">CLOSE</string>
     <string name="dialog_msg2">YOU GET </string>
     <string name="dialog_msg3"> COINS</string>
     <string name="dialog_msg4">PLAY DOUBLE DOWN！\nOR COLLECT YOUR WINNINGS</string>
-    <string name="touch_msg1">To the next game by touching</string>
+    <string name="touch_msg1">TO THE NEXT GAME BY TOUCHING</string>
     <string name="ok">OK</string>
     <string name="dialog_msg5">Are you sure you want to quit?</string>
+    <string name="high_score">High Score Ranking</string>
+    <string name="high_score_send">Send High Score</string>
+    <string name="basic_dialog_msg">Are you sure you want to send the data?</string>
 </resources>
