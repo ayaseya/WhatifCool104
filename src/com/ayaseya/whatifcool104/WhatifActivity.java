@@ -10,6 +10,10 @@ import java.util.Collections;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import net.nend.android.NendAdIconLoader;
+import net.nend.android.NendAdListener;
+import net.nend.android.NendAdView;
+import net.nend.android.NendAdView.NendError;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -67,7 +71,7 @@ import com.google.android.gms.games.leaderboard.Leaderboards.SubmitScoreResult;
 import com.google.example.games.basegameutils.BaseGameActivity;
 
 public class WhatifActivity extends BaseGameActivity
-		implements ViewFactory {
+		implements ViewFactory, NendAdListener {
 
 	// LogCat用のタグを定数で定義する
 	public static final String TAG = "Test";
@@ -239,6 +243,8 @@ public class WhatifActivity extends BaseGameActivity
 	private ResultCallback<SubmitScoreResult> callback;
 
 	private int count_DoubleDown = 0;
+
+	private NendAdIconLoader nend;
 
 	/* ********** ********** ********** ********** */
 
@@ -447,6 +453,8 @@ public class WhatifActivity extends BaseGameActivity
 		loading.setMessage(getString(R.string.wait));
 		loading.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 		loading.setCancelable(false);
+
+		nend = new NendAdIconLoader(getApplicationContext(), 156841, "ebaef1347f6ca1a4cd696a987d0d9fbba4dda8fa");
 
 		//		Log.v(TAG, "onCreate()");
 
@@ -3901,9 +3909,11 @@ public class WhatifActivity extends BaseGameActivity
 	private void finishDialog() {
 
 		LayoutInflater inflater = LayoutInflater.from(WhatifActivity.this);
-		final View dialog = inflater.inflate(R.layout.finish_dialog,
+		View dialog = inflater.inflate(R.layout.finish_dialog,
 				(ViewGroup) findViewById(R.id.finish_dialog));
 
+		NendAdView nendAdView = (NendAdView) dialog.findViewById(R.id.nend);
+		nendAdView.setListener(this);
 		// AdView をリソースとしてルックアップしてリクエストを読み込む
 		//		AdView adView1 = (AdView) dialog.findViewById(R.id.adView_finish);
 		//		AdRequest adRequest1 = new AdRequest.Builder().build();
@@ -3937,8 +3947,37 @@ public class WhatifActivity extends BaseGameActivity
 				.create();
 
 		//		adView1.loadAd(adRequest1);
+		nendAdView.loadAd();
 		alert_finish.show();
 
+	}
+
+	/** 受信エラー通知 */
+	@Override
+	public void onFailedToReceiveAd(NendAdView nendAdView) {
+		//		Toast.makeText(getApplicationContext(), "onFailedToReceiveAd", Toast.LENGTH_LONG).show();
+
+		NendError nendError = nendAdView.getNendError();
+		Log.v(TAG, "NendError=" + nendError.getMessage());
+
+	}
+
+	/** 受信成功通知 */
+	@Override
+	public void onReceiveAd(NendAdView nendAdView) {
+		//		Toast.makeText(getApplicationContext(), "onReceiveAd", Toast.LENGTH_LONG).show();
+	}
+
+	/** クリック通知 */
+	@Override
+	public void onClick(NendAdView nendAdView) {
+		//		Toast.makeText(getApplicationContext(), "onClick", Toast.LENGTH_LONG).show();
+	}
+
+	/** 復帰通知 */
+	@Override
+	public void onDismissScreen(NendAdView nendAdView) {
+		//		Toast.makeText(getApplicationContext(), "onDismissScreen", Toast.LENGTH_LONG).show();
 	}
 
 }
